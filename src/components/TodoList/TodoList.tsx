@@ -1,13 +1,18 @@
+import List from "@mui/material/List";
 import TodoItem from "../TodoItem";
 import { TodoListProps } from "./TodoListProps";
 
 const TodoList = ({ todoList, onTodoStatusChange }: TodoListProps) => {
   return (
-    <ul>
+    <List>
       {todoList.map((todo) => (
-        <TodoItem key={todo.id} todo={todo} onStatusChange={onTodoStatusChange} />
+        <TodoItem
+          todo={todo}
+          key={todo.id}
+          onStatusChange={onTodoStatusChange}
+        />
       ))}
-    </ul>
+    </List>
   );
 };
 

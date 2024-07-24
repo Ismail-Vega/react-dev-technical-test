@@ -1,5 +1,7 @@
 import { memo } from "react";
 import { TodoItemProps } from "./TodoItemProps";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
 
 const TodoItem = memo(({ todo, onStatusChange }: TodoItemProps) => {
   const { id, completed, description } = todo;
@@ -9,15 +11,15 @@ const TodoItem = memo(({ todo, onStatusChange }: TodoItemProps) => {
   };
 
   return (
-    <li
+    <ListItem
       onClick={handleStatusChange}
       style={{
         textAlign: "start",
         textDecoration: completed ? "line-through" : "none",
       }}
     >
-      {description}
-    </li>
+      <ListItemText primary={description} />
+    </ListItem>
   );
 });
 
