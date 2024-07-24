@@ -1,35 +1,53 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useCallback, useState } from "react";
+import { Todo } from "./components/TodoItem/TodoItemProps";
+import TodoList from "./components/TodoList/TodoList";
+import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const [newTodo, setNewTodo] = useState("");
+  const [list, setList] = useState<Todo[]>([]);
+
+  const handleAddTodo = () => {
+    if (newTodo.trim().length >= 3) {
+      setList((prevList) => [
+        ...prevList,
+        { id: Date.now(), description: newTodo, completed: false },
+      ]);
+      setNewTodo("");
+    }
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleAddTodo();
+    }
+  };
+
+  const toggleComplete = useCallback((id: number) => {
+    setList((prevList) =>
+      prevList.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div style={{ width: "500px" }}>
+      <h1>To-Do List</h1>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <input
+          type="text"
+          value={newTodo}
+          aria-label="New task"
+          onKeyDown={handleKeyDown}
+          placeholder="Add a new task"
+          onChange={(e) => setNewTodo(e.target.value)}
+        />
+        <button onClick={handleAddTodo}>Add Task</button>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+      <TodoList todoList={list} onTodoStatusChange={toggleComplete} />
+    </div>
+  );
+};
 
-export default App
+export default App;
