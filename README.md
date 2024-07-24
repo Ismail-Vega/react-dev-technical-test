@@ -1,30 +1,16 @@
-# React + TypeScript + Vite
+# React Developer Technical Test
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Level 1 - Components and Local State
 
-Currently, two official plugins are available:
+### Objective
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Create a simple to-do list application.
 
-## Expanding the ESLint configuration
+### Requirements
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json', './tsconfig.app.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+- Create a `TodoItem` component that represents an individual task.
+- Create a `TodoList` component that contains multiple `TodoItem` components.
+- Use local state to manage the list of tasks and allow adding new tasks.
+- Allow marking tasks as completed.
+- Include a form to add new tasks with validations for required fields and minimum length.
+- Implement a filter to show all tasks, only completed tasks, or only pending tasks.
