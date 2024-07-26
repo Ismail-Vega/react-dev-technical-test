@@ -1,3 +1,5 @@
+import { MouseEvent } from "react";
+
 export type TodoStatusHandler = (id: number) => void;
 
 export interface Todo {
@@ -9,6 +11,9 @@ export interface Todo {
 
 export interface TodoItemProps {
   todo: Todo;
+  isPopupOpen: boolean;
+  onPopupClose: () => void;
   onDelete: TodoStatusHandler;
   onStatusChange: TodoStatusHandler;
+  onPopupOpen: (id: number, event: MouseEvent) => void;
 }
