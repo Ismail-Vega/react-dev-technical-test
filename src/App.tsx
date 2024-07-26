@@ -1,131 +1,105 @@
-import { useCallback, useMemo, useState } from "react";
-import { Box } from "@mui/material/";
+import { useContext, useState } from "react";
+import { Box } from "@mui/material";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
+import TaskIcon from "@mui/icons-material/Task";
 import Typography from "@mui/material/Typography";
-import ToggleButton from "@mui/material/ToggleButton";
-import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import NewTodoForm from "./components/NewTodoForm";
-import TodoList from "./components/TodoList/TodoList";
-import { Todo } from "./components/TodoItem/TodoItemProps";
 
-import "./App.css";
+import AppForm from "./components/AppForm";
 import AppModal from "./components/AppModal";
+import { StateActionTypes } from "./state/types";
+import { TodoContext } from "./state/TodoProvider";
+import ListsTable from "./components/ListsTable";
 
 const App = () => {
-  const [list, setList] = useState<Todo[]>([]);
+  const { state, dispatch } = useContext(TodoContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [filter, setFilter] = useState<"all" | "completed" | "pending">("all");
+  const [editingList, setEditingList] = useState<string | null>(null);
 
-  const handleAddTodo = (description: string) => {
-    const newTodo: Todo = {
-      id: Date.now(),
-      description,
-      completed: false,
-    };
+  const handleAddOrEditList = (listName: string, description: string) => {
+    if (listName.trim() !== "") {
+      if (editingList) {
+        dispatch({
+          type: StateActionTypes.EDIT_TODO_LIST,
+          payload: {
+            id: editingList,
+            list: { ...state.lists[editingList], name: listName, description },
+          },
+        });
+      } else {
+        const listId = `list_${Date.now()}`;
+        const newList = {
+          id: listId,
+          name: listName,
+          description: description,
+          todoList: [],
+        };
 
-    setList((prevList) => [...prevList, newTodo]);
-    setIsModalOpen(false);
+        dispatch({
+          type: StateActionTypes.ADD_TODO_LIST,
+          payload: { id: listId, list: newList },
+        });
+      }
+      setIsModalOpen(false);
+      setEditingList(null);
+    }
   };
 
-  const toggleComplete = useCallback((id: number) => {
-    setList((prevList) =>
-      prevList.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
-    );
-  }, []);
+  const handleOpenModal = (id: string | null) => {
+    setEditingList(id);
+    setIsModalOpen(true);
+  };
 
-  const filteredList = useMemo(
-    () =>
-      list.filter((todo) => {
-        if (filter === "completed") return todo.completed;
-        if (filter === "pending") return !todo.completed;
-        return true;
-      }),
-    [filter, list]
-  );
+  const confirmDeleteList = (id: string) => {
+    dispatch({
+      type: StateActionTypes.DELETE_TODO_LIST,
+      payload: { listId: id },
+    });
+  };
 
   return (
-    <Container component="main" maxWidth="md">
+    <Container>
       <Box
         sx={{
-          marginTop: 8,
+          marginTop: 12,
+          marginBottom: 2,
+          width: "100%",
           display: "flex",
           alignItems: "center",
-          flexDirection: "column",
+          justifyContent: "space-between",
         }}
       >
-        <Box
+        <Typography
+          variant="h6"
+          gutterBottom
           sx={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "space-between",
+            marginLeft: "8px",
           }}
         >
-          <Typography component="h1" variant="h4">
-            Todo List
-          </Typography>
-          <Button
-            variant="outlined"
-            onClick={() => setIsModalOpen(true)}
-          >
-            Create task
-          </Button>
-        </Box>
-
-        <Box
-          sx={{
-            mt: 4,
-            width: "100%",
-            display: "flex",
-            justifyContent: "flex-end",
-          }}
-        >
-          <ToggleButtonGroup
-            size="small"
-            value={filter}
-            exclusive
-            onChange={(_, newFilter) => {
-              if (newFilter !== null) {
-                setFilter(newFilter);
-              }
-            }}
-            aria-label="todo filter"
-            sx={{ mb: 2 }}
-          >
-            <ToggleButton value="all" aria-label="all todos">
-              All
-            </ToggleButton>
-            <ToggleButton value="completed" aria-label="completed todos">
-              Completed
-            </ToggleButton>
-            <ToggleButton value="pending" aria-label="pending todos">
-              Pending
-            </ToggleButton>
-          </ToggleButtonGroup>
-        </Box>
-
-        <Box
-          sx={{
-            mt: 4,
-            width: "100%",
-            display: "flex",
-          }}
-        >
-          <TodoList
-            todoList={filteredList}
-            onTodoStatusChange={toggleComplete}
-          />
-        </Box>
-        <AppModal
-          title="Create new task"
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-        >
-          <NewTodoForm onAddTodo={handleAddTodo} />
-        </AppModal>
+          Lists
+        </Typography>
+        <Button variant="contained" onClick={() => handleOpenModal(null)}>
+          Create List
+        </Button>
       </Box>
+
+      <ListsTable rowMenuActions={[handleOpenModal, confirmDeleteList]} />
+
+      <AppModal
+        title="Create/Edit list"
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      >
+        <AppForm
+          label="List Name"
+          icon={<TaskIcon />}
+          onSubmit={handleAddOrEditList}
+          initialNameValue={editingList ? state.lists[editingList]?.name : ""}
+          initialDescriptionValue={
+            editingList ? state.lists[editingList]?.description : ""
+          }
+        />
+      </AppModal>
     </Container>
   );
 };

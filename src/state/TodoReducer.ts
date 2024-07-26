@@ -1,6 +1,9 @@
 import { StateAction, StoreState, StateActionTypes } from "./types";
 
-export const todoReducer = (state: StoreState, action: StateAction): StoreState => {
+export const todoReducer = (
+  state: StoreState,
+  action: StateAction
+): StoreState => {
   switch (action.type) {
     case StateActionTypes.ADD_TODO:
       return {
@@ -23,11 +26,10 @@ export const todoReducer = (state: StoreState, action: StateAction): StoreState 
           ...state.lists,
           [action.payload.listId]: {
             ...state.lists[action.payload.listId],
-            todoList: state.lists[action.payload.listId].todoList.map(
-              (todo) =>
-                todo.id === action.payload.todoId
-                  ? { ...todo, completed: !todo.completed }
-                  : todo
+            todoList: state.lists[action.payload.listId].todoList.map((todo) =>
+              todo.id === action.payload.todoId
+                ? { ...todo, completed: !todo.completed }
+                : todo
             ),
           },
         },
@@ -60,6 +62,18 @@ export const todoReducer = (state: StoreState, action: StateAction): StoreState 
         lists: remainingLists,
       };
     }
+    case StateActionTypes.EDIT_TODO_LIST:
+      return {
+        ...state,
+        lists: {
+          ...state.lists,
+          [action.payload.id]: {
+            ...state.lists[action.payload.id],
+            ...action.payload.list,
+          },
+        },
+      };
+
     default:
       return state;
   }
