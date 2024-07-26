@@ -1,20 +1,28 @@
 import { FormEvent, useState, useRef, useEffect } from "react";
+
 import { Box } from "@mui/material/";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import TextField from "@mui/material/TextField";
-import TaskIcon from "@mui/icons-material/Task";
 import FormControl from "@mui/material/FormControl";
-import { NewTodoFormProps } from "./NewTodoFormProps";
 
-const NewTodoForm = ({ onAddTodo }: NewTodoFormProps) => {
-  const [description, setDescription] = useState("");
+import { AppFormProps } from "./AppFormProps";
+
+const MIN_NAME_LENGTH = 3;
+const MAX_NAME_LENGTH = 50;
+
+const AppForm = ({
+  icon,
+  label,
+  onSubmit,
+  initialNameValue = "",
+  initialDescriptionValue = "",
+}: AppFormProps) => {
+  const [name, setName] = useState(initialNameValue);
+  const [description, setDescription] = useState(initialDescriptionValue);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
-
-  const MIN_LENGTH = 3;
-  const MAX_LENGTH = 100;
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -23,19 +31,20 @@ const NewTodoForm = ({ onAddTodo }: NewTodoFormProps) => {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (description.trim().length < MIN_LENGTH) {
+    if (name.trim().length < MIN_NAME_LENGTH) {
       setError(true);
-      setErrorMsg(`Description must be at least ${MIN_LENGTH} characters.`);
+      setErrorMsg(`Name must be at least ${MIN_NAME_LENGTH} characters.`);
       return;
     }
 
-    if (description.trim().length > MAX_LENGTH) {
+    if (name.trim().length > MAX_NAME_LENGTH) {
       setError(true);
-      setErrorMsg(`Description must be no more than ${MAX_LENGTH} characters.`);
+      setErrorMsg(`Name must be no more than ${MAX_NAME_LENGTH} characters.`);
       return;
     }
 
-    onAddTodo(description);
+    onSubmit(name, description);
+    setName("");
     setDescription("");
   };
 
@@ -48,9 +57,7 @@ const NewTodoForm = ({ onAddTodo }: NewTodoFormProps) => {
         flexDirection: "column",
       }}
     >
-      <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
-        <TaskIcon />
-      </Avatar>
+      <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>{icon}</Avatar>
       <Box
         component="form"
         onSubmit={handleSubmit}
@@ -60,20 +67,28 @@ const NewTodoForm = ({ onAddTodo }: NewTodoFormProps) => {
           <TextField
             required
             fullWidth
+            id="input"
+            name="input"
             error={error}
             margin="normal"
+            label={label}
+            value={name}
+            inputRef={inputRef}
+            onFocus={() => setError(false)}
+            inputProps={{ maxLength: MAX_NAME_LENGTH }}
+            sx={{ backgroundColor: "rgb(232,240,254)" }}
+            onChange={(e) => setName(e.target.value)}
+            helperText={error ? errorMsg : `${name.length}/${MAX_NAME_LENGTH}`}
+          />
+          <TextField
+            fullWidth
             id="description"
             name="description"
+            margin="normal"
             label="Description"
             value={description}
-            inputRef={inputRef}
-            onChange={(e) => setDescription(e.target.value)}
-            onFocus={() => setError(false)}
             sx={{ backgroundColor: "rgb(232,240,254)" }}
-            helperText={
-              error ? errorMsg : `${description.length}/${MAX_LENGTH}`
-            }
-            inputProps={{ maxLength: MAX_LENGTH }}
+            onChange={(e) => setDescription(e.target.value)}
           />
         </FormControl>
 
@@ -83,11 +98,11 @@ const NewTodoForm = ({ onAddTodo }: NewTodoFormProps) => {
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
         >
-          Create
+          Submit
         </Button>
       </Box>
     </Box>
   );
 };
 
-export default NewTodoForm;
+export default AppForm;
