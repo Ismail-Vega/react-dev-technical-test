@@ -8,18 +8,16 @@ import FormControl from "@mui/material/FormControl";
 
 import { AppFormProps } from "./AppFormProps";
 
-const MIN_NAME_LENGTH = 3;
-const MAX_NAME_LENGTH = 50;
+const MIN_TITLE_LENGTH = 3;
+const MAX_TITLE_LENGTH = 50;
 
 const AppForm = ({
   icon,
   label,
   onSubmit,
-  initialNameValue = "",
-  initialDescriptionValue = "",
+  initialTitleValue = "",
 }: AppFormProps) => {
-  const [name, setName] = useState(initialNameValue);
-  const [description, setDescription] = useState(initialDescriptionValue);
+  const [title, setTitle] = useState(initialTitleValue);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -31,21 +29,20 @@ const AppForm = ({
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (name.trim().length < MIN_NAME_LENGTH) {
+    if (title.trim().length < MIN_TITLE_LENGTH) {
       setError(true);
-      setErrorMsg(`Name must be at least ${MIN_NAME_LENGTH} characters.`);
+      setErrorMsg(`Title must be at least ${MIN_TITLE_LENGTH} characters.`);
       return;
     }
 
-    if (name.trim().length > MAX_NAME_LENGTH) {
+    if (title.trim().length > MAX_TITLE_LENGTH) {
       setError(true);
-      setErrorMsg(`Name must be no more than ${MAX_NAME_LENGTH} characters.`);
+      setErrorMsg(`Title must be no more than ${MAX_TITLE_LENGTH} characters.`);
       return;
     }
 
-    onSubmit(name, description);
-    setName("");
-    setDescription("");
+    onSubmit(title);
+    setTitle("");
   };
 
   return (
@@ -72,23 +69,13 @@ const AppForm = ({
             error={error}
             margin="normal"
             label={label}
-            value={name}
+            value={title}
             inputRef={inputRef}
             onFocus={() => setError(false)}
-            inputProps={{ maxLength: MAX_NAME_LENGTH }}
+            inputProps={{ maxLength: MAX_TITLE_LENGTH }}
             sx={{ backgroundColor: "rgb(232,240,254)" }}
-            onChange={(e) => setName(e.target.value)}
-            helperText={error ? errorMsg : `${name.length}/${MAX_NAME_LENGTH}`}
-          />
-          <TextField
-            fullWidth
-            id="description"
-            name="description"
-            margin="normal"
-            label="Description"
-            value={description}
-            sx={{ backgroundColor: "rgb(232,240,254)" }}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={(e) => setTitle(e.target.value)}
+            helperText={error ? errorMsg : `${title.length}/${MAX_TITLE_LENGTH}`}
           />
         </FormControl>
 

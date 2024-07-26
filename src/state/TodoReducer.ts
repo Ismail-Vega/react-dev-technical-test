@@ -62,6 +62,15 @@ export const todoReducer = (
         lists: remainingLists,
       };
     }
+    case StateActionTypes.ADD_TODO_LISTS: {
+      return {
+        ...state,
+        lists: {
+          ...state.lists,
+          ...action.payload.lists,
+        },
+      };
+    }
     case StateActionTypes.EDIT_TODO_LIST:
       return {
         ...state,
@@ -73,7 +82,18 @@ export const todoReducer = (
           },
         },
       };
-
+    case StateActionTypes.SET_LOADING: {
+      return {
+        ...state,
+        loading: action.payload.loading,
+      };
+    }
+    case StateActionTypes.SET_ERROR: {
+      return {
+        ...state,
+        error: action.payload.error,
+      };
+    }
     default:
       return state;
   }

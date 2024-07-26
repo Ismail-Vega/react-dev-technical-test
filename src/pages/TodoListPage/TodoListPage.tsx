@@ -22,16 +22,17 @@ const TodoListPage = () => {
   const { id } = useParams<{ id: string }>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filter, setFilter] = useState<"all" | "completed" | "pending">("all");
+  const idParam = Number(id);
 
   useEffect(() => {
-    if (!id || !state.lists[id]) {
+    if (!idParam || !state.lists[idParam]) {
       navigate("/");
     }
-  }, [id, state.lists, navigate]);
+  }, [idParam, state.lists, navigate]);
 
   const filteredList = useMemo(() => {
-    if (id && state.lists[id]) {
-      const { todoList } = state.lists[id];
+    if (idParam && state.lists[idParam]) {
+      const { todoList } = state.lists[idParam];
 
       return todoList && todoList.length
         ? todoList.filter((todo) => {
@@ -41,29 +42,29 @@ const TodoListPage = () => {
           })
         : [];
     } else return [];
-  }, [filter, id, state.lists]);
+  }, [filter, idParam, state.lists]);
 
   const toggleComplete = (todoId: number) => {
-    if (id) {
+    if (idParam) {
       dispatch({
         type: StateActionTypes.TOGGLE_TODO,
-        payload: { listId: id, todoId },
+        payload: { listId: idParam, todoId },
       });
     }
   };
 
-  const handleAddTodo = (name: string, description: string) => {
+  const handleAddTodo = (title: string) => {
     const newTodo: Todo = {
       id: Date.now(),
-      name,
-      description,
+      title,
+      userId: idParam,
       completed: false,
     };
 
-    if (id) {
+    if (idParam) {
       dispatch({
         type: StateActionTypes.ADD_TODO,
-        payload: { listId: id, todo: newTodo },
+        payload: { listId: idParam, todo: newTodo },
       });
     }
 
@@ -71,19 +72,19 @@ const TodoListPage = () => {
   };
 
   const handleDeleteTodo = (todoId: number) => {
-    if (id) {
+    if (idParam) {
       dispatch({
         type: StateActionTypes.DELETE_TODO,
-        payload: { listId: id, todoId },
+        payload: { listId: idParam, todoId },
       });
     }
 
     setIsModalOpen(false);
   };
 
-  if (!id || !state.lists[id]) return null;
+  if (!idParam || !state.lists[idParam]) return null;
 
-  const { name } = state.lists[id];
+  const { name } = state.lists[idParam];
 
   return (
     <Container>

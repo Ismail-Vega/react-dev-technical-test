@@ -27,15 +27,15 @@ const TodoItem = memo(
     onPopupOpen,
     onPopupClose,
   }: TodoItemProps) => {
-    const { id, name, completed, description } = todo;
+    const { id, title, userId, completed } = todo;
     const anchorEl = useRef<HTMLElement>(null);
 
     const handleStatusChange = () => {
-      onStatusChange(id);
+      onStatusChange(id, userId);
     };
 
     const handleTodoDelete = () => {
-      onDelete(id);
+      onDelete(id, userId);
     };
 
     const handlePopupOpen = (event: MouseEvent) => {
@@ -56,8 +56,7 @@ const TodoItem = memo(
               textDecoration: completed ? "line-through" : "none",
             }}
           >
-            <Typography variant="h6">{name} </Typography>
-            <Typography variant="h6">{description} </Typography>
+            <Typography variant="h6">{title} </Typography>
             <Tooltip title="Delete">
               <IconButton aria-label="delete" onClick={handlePopupOpen}>
                 <DeleteIcon />

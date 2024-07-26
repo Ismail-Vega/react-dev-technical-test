@@ -1,9 +1,8 @@
 import { Todo, TodoStatusHandler } from "../TodoItem/TodoItemProps";
 
 export interface TodoList {
-  id: string;
+  id: number;
   name: string;
-  description: string;
   todoList: Todo[];
 }
 

@@ -1,12 +1,12 @@
 import { MouseEvent } from "react";
 
-export type TodoStatusHandler = (id: number) => void;
+export type TodoStatusHandler = (id: number, listId: number) => void;
 
 export interface Todo {
   id: number;
-  name: string;
+  title: string;
+  userId: number;
   completed: boolean;
-  description: string;
 }
 
 export interface TodoItemProps {
