@@ -1,5 +1,5 @@
-import { useParams } from "react-router-dom";
-import { useContext, useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useContext, useEffect, useMemo, useState } from "react";
 
 import { Box } from "@mui/material";
 import Button from "@mui/material/Button";
@@ -17,13 +17,20 @@ import { TodoContext } from "../../state/TodoProvider";
 import { Todo } from "../../components/TodoItem/TodoItemProps";
 
 const TodoListPage = () => {
+  const navigate = useNavigate();
   const { state, dispatch } = useContext(TodoContext);
   const { id } = useParams<{ id: string }>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filter, setFilter] = useState<"all" | "completed" | "pending">("all");
 
+  useEffect(() => {
+    if (!id || !state.lists[id]) {
+      navigate("/");
+    }
+  }, [id, state.lists, navigate]);
+
   const filteredList = useMemo(() => {
-    if (id) {
+    if (id && state.lists[id]) {
       const { todoList } = state.lists[id];
 
       return todoList && todoList.length
@@ -74,7 +81,7 @@ const TodoListPage = () => {
     setIsModalOpen(false);
   };
 
-  if (!id) return null;
+  if (!id || !state.lists[id]) return null;
 
   const { name } = state.lists[id];
 
