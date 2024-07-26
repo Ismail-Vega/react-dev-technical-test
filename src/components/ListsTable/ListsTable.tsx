@@ -1,4 +1,11 @@
-import { MouseEvent, ReactNode, useContext, useMemo, useState } from "react";
+import {
+  MouseEvent,
+  ReactNode,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 
 import { Box } from "@mui/material";
 import Table from "@mui/material/Table";
@@ -19,31 +26,25 @@ import { ListTableProps } from "./ListTableProps";
 
 interface Data {
   name: string;
-  description: string;
   actions: ReactNode;
 }
 
-function createData(
-  name: string,
-  description: string,
-  actions: ReactNode
-): Data {
+function createData(name: string, actions: ReactNode): Data {
   return {
     name,
-    description,
     actions,
   };
 }
 
 const ListsTable = ({ rowMenuActions }: ListTableProps) => {
   const { state } = useContext(TodoContext);
-  const [openPopper, setOpenPopper] = useState<{ [key: string]: boolean }>({});
+  const [openPopper, setOpenPopper] = useState<{ [key: number]: boolean }>({});
   const [anchorEl, setAnchorEl] = useState<{
-    [key: string]: HTMLButtonElement | null;
+    [key: number]: HTMLButtonElement | null;
   }>({});
 
-  const handleClick =
-    (listId: string) => (event: MouseEvent<HTMLButtonElement>) => {
+  const handleClick = useCallback(
+    (listId: number) => (event: MouseEvent<HTMLButtonElement>) => {
       setAnchorEl((prev) => ({
         ...prev,
         [listId]: event.currentTarget,
@@ -52,9 +53,11 @@ const ListsTable = ({ rowMenuActions }: ListTableProps) => {
         ...prev,
         [listId]: !prev[listId],
       }));
-    };
+    },
+    []
+  );
 
-  const handleClosePopper = (listId: string) => () => {
+  const handleClosePopper = (listId: number) => () => {
     setOpenPopper((prev) => ({
       ...prev,
       [listId]: false,
@@ -64,21 +67,25 @@ const ListsTable = ({ rowMenuActions }: ListTableProps) => {
   const rows = useMemo(
     () =>
       Object.keys(state.lists).map((listId) => {
-        const { name, description } = state.lists[listId];
+        const parsedId = Number(listId);
+        const { name } = state.lists[parsedId];
 
         const tablePopper = (
           <Box key={listId}>
-            <IconButton aria-label="edit/delete" onClick={handleClick(listId)}>
+            <IconButton
+              aria-label="edit/delete"
+              onClick={handleClick(parsedId)}
+            >
               <MoreHorizIcon />
             </IconButton>
 
             <Popper
-              open={!!anchorEl[listId] && openPopper[listId]}
-              anchorEl={anchorEl[listId]}
+              open={!!anchorEl[parsedId] && openPopper[parsedId]}
+              anchorEl={anchorEl[parsedId]}
               placement="bottom-end"
               modifiers={[{ name: "offset", options: { offset: [0, 8] } }]}
             >
-              <ClickAwayListener onClickAway={handleClosePopper(listId)}>
+              <ClickAwayListener onClickAway={handleClosePopper(parsedId)}>
                 <Paper>
                   <Box
                     sx={{
@@ -90,11 +97,11 @@ const ListsTable = ({ rowMenuActions }: ListTableProps) => {
                     <ListItemButton
                       sx={{ width: "100%" }}
                       onClick={() => {
-                        rowMenuActions[0](listId);
+                        rowMenuActions[0](parsedId);
 
                         setOpenPopper((prev) => ({
                           ...prev,
-                          [listId]: false,
+                          [parsedId]: false,
                         }));
                       }}
                     >
@@ -102,11 +109,11 @@ const ListsTable = ({ rowMenuActions }: ListTableProps) => {
                     </ListItemButton>
                     <ListItemButton
                       onClick={() => {
-                        rowMenuActions[1](listId);
+                        rowMenuActions[1](parsedId);
 
                         setOpenPopper((prev) => ({
                           ...prev,
-                          [listId]: false,
+                          [parsedId]: false,
                         }));
                       }}
                     >
@@ -119,9 +126,9 @@ const ListsTable = ({ rowMenuActions }: ListTableProps) => {
           </Box>
         );
 
-        return createData(name, description, tablePopper);
+        return createData(name, tablePopper);
       }),
-    [anchorEl, openPopper, rowMenuActions, state.lists]
+    [anchorEl, handleClick, openPopper, rowMenuActions, state.lists]
   );
 
   return rows.length ? (
@@ -130,7 +137,6 @@ const ListsTable = ({ rowMenuActions }: ListTableProps) => {
         <TableHead>
           <TableRow>
             <TableCell align="left">Name</TableCell>
-            <TableCell align="center">Description</TableCell>
             <TableCell align="right"></TableCell>
           </TableRow>
         </TableHead>
@@ -141,7 +147,6 @@ const ListsTable = ({ rowMenuActions }: ListTableProps) => {
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
               <TableCell align="left">{row.name}</TableCell>
-              <TableCell align="center">{row.description}</TableCell>
               <TableCell align="right">{row.actions}</TableCell>
             </TableRow>
           ))}

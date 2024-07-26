@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 import { Box } from "@mui/material";
 import Button from "@mui/material/Button";
@@ -44,43 +44,52 @@ const TodoListPage = () => {
     } else return [];
   }, [filter, idParam, state.lists]);
 
-  const toggleComplete = (todoId: number) => {
-    if (idParam) {
-      dispatch({
-        type: StateActionTypes.TOGGLE_TODO,
-        payload: { listId: idParam, todoId },
-      });
-    }
-  };
+  const toggleComplete = useCallback(
+    (todoId: number) => {
+      if (idParam) {
+        dispatch({
+          type: StateActionTypes.TOGGLE_TODO,
+          payload: { listId: idParam, todoId },
+        });
+      }
+    },
+    [dispatch, idParam]
+  );
 
-  const handleAddTodo = (title: string) => {
-    const newTodo: Todo = {
-      id: Date.now(),
-      title,
-      userId: idParam,
-      completed: false,
-    };
+  const handleAddTodo = useCallback(
+    (title: string) => {
+      const newTodo: Todo = {
+        id: Date.now(),
+        title,
+        userId: idParam,
+        completed: false,
+      };
 
-    if (idParam) {
-      dispatch({
-        type: StateActionTypes.ADD_TODO,
-        payload: { listId: idParam, todo: newTodo },
-      });
-    }
+      if (idParam) {
+        dispatch({
+          type: StateActionTypes.ADD_TODO,
+          payload: { listId: idParam, todo: newTodo },
+        });
+      }
 
-    setIsModalOpen(false);
-  };
+      setIsModalOpen(false);
+    },
+    [dispatch, idParam]
+  );
 
-  const handleDeleteTodo = (todoId: number) => {
-    if (idParam) {
-      dispatch({
-        type: StateActionTypes.DELETE_TODO,
-        payload: { listId: idParam, todoId },
-      });
-    }
+  const handleDeleteTodo = useCallback(
+    (todoId: number) => {
+      if (idParam) {
+        dispatch({
+          type: StateActionTypes.DELETE_TODO,
+          payload: { listId: idParam, todoId },
+        });
+      }
 
-    setIsModalOpen(false);
-  };
+      setIsModalOpen(false);
+    },
+    [dispatch, idParam]
+  );
 
   if (!idParam || !state.lists[idParam]) return null;
 

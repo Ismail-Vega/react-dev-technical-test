@@ -14,24 +14,23 @@ import ListsTable from "./components/ListsTable";
 const App = () => {
   const { state, dispatch } = useContext(TodoContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingList, setEditingList] = useState<string | null>(null);
+  const [editingList, setEditingList] = useState<number | null>(null);
 
-  const handleAddOrEditList = (listName: string, description: string) => {
+  const handleAddOrEditList = (listName: string) => {
     if (listName.trim() !== "") {
       if (editingList) {
         dispatch({
           type: StateActionTypes.EDIT_TODO_LIST,
           payload: {
             id: editingList,
-            list: { ...state.lists[editingList], name: listName, description },
+            list: { ...state.lists[editingList], name: listName },
           },
         });
       } else {
-        const listId = `list_${Date.now()}`;
+        const listId = Date.now();
         const newList = {
           id: listId,
           name: listName,
-          description: description,
           todoList: [],
         };
 
@@ -45,12 +44,12 @@ const App = () => {
     }
   };
 
-  const handleOpenModal = (id: string | null) => {
+  const handleOpenModal = (id: number | null) => {
     setEditingList(id);
     setIsModalOpen(true);
   };
 
-  const confirmDeleteList = (id: string) => {
+  const confirmDeleteList = (id: number) => {
     dispatch({
       type: StateActionTypes.DELETE_TODO_LIST,
       payload: { listId: id },
@@ -94,10 +93,7 @@ const App = () => {
           label="List Name"
           icon={<TaskIcon />}
           onSubmit={handleAddOrEditList}
-          initialNameValue={editingList ? state.lists[editingList]?.name : ""}
-          initialDescriptionValue={
-            editingList ? state.lists[editingList]?.description : ""
-          }
+          initialTitleValue={editingList ? state.lists[editingList]?.name : ""}
         />
       </AppModal>
     </Container>

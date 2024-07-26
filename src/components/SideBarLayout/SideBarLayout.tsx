@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useCallback, useContext, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Box } from "@mui/material";
@@ -24,44 +24,47 @@ const SideBarLayout = ({ children }: SideBarLayoutProps) => {
   const { state } = useContext(TodoContext);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const handleDrawerToggle = () => {
+  const handleDrawerToggle = useCallback(() => {
     setMobileOpen(!mobileOpen);
-  };
+  }, [mobileOpen]);
 
-  const drawer = (
-    <div>
-      <Toolbar
-        sx={{
-          backgroundColor: (t) =>
-            t.palette.mode === "light"
-              ? t.palette.grey[50]
-              : t.palette.grey[900],
-        }}
-      >
-        <ListNavItem
-          path="/"
-          key="home"
-          value="Home"
-          icon={<HomeIcon />}
-          navigate={navigate}
-          onClick={handleDrawerToggle}
-        />
-      </Toolbar>
-
-      <Divider />
-      <List>
-        {Object.keys(state.lists).map((id) => (
+  const drawer = useMemo(
+    () => (
+      <div>
+        <Toolbar
+          sx={{
+            backgroundColor: (t) =>
+              t.palette.mode === "light"
+                ? t.palette.grey[50]
+                : t.palette.grey[900],
+          }}
+        >
           <ListNavItem
-            key={id}
-            icon={<ListIcon />}
+            path="/"
+            key="home"
+            value="Home"
+            icon={<HomeIcon />}
             navigate={navigate}
-            path={`/list/${id}`}
-            value={state.lists[id].name}
             onClick={handleDrawerToggle}
           />
-        ))}
-      </List>
-    </div>
+        </Toolbar>
+
+        <Divider />
+        <List>
+          {Object.keys(state.lists).map((id) => (
+            <ListNavItem
+              key={id}
+              icon={<ListIcon />}
+              navigate={navigate}
+              path={`/list/${id}`}
+              value={state.lists[Number(id)].name}
+              onClick={handleDrawerToggle}
+            />
+          ))}
+        </List>
+      </div>
+    ),
+    [handleDrawerToggle, navigate, state.lists]
   );
 
   return (

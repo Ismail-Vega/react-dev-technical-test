@@ -1,4 +1,4 @@
-export type RowMenuAction = (id: string) => void;
+export type RowMenuAction = (id: number) => void;
 
 export interface ListTableProps {
   rowMenuActions: RowMenuAction[];

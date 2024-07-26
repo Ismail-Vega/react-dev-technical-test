@@ -1,4 +1,4 @@
-import { MouseEvent, useState } from "react";
+import { MouseEvent, useCallback, useState } from "react";
 import Stack from "@mui/material/Stack";
 
 import TodoItem from "../TodoItem";
@@ -11,14 +11,14 @@ const TodoList = ({
 }: TodoListProps) => {
   const [openPopupId, setOpenPopupId] = useState<number | null>(null);
 
-  const handlePopupOpen = (id: number, event: MouseEvent) => {
+  const handlePopupOpen = useCallback((id: number, event: MouseEvent) => {
     event.stopPropagation();
     setOpenPopupId(id);
-  };
+  }, []);
 
-  const handlePopupClose = () => {
+  const handlePopupClose = useCallback(() => {
     setOpenPopupId(null);
-  };
+  }, []);
 
   return (
     <Stack spacing={2} width="100%">
@@ -36,5 +36,4 @@ const TodoList = ({
     </Stack>
   );
 };
-
 export default TodoList;
