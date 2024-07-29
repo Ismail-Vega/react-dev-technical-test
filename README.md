@@ -41,3 +41,18 @@ Integrate the application with an external API and optimize performance.
 - Use `useEffect` to make API requests and load the task list data.
 - Implement a simple data cache to avoid multiple API requests for the same data.
 - Optimize the application to improve performance (e.g., through memoization and on-demand rendering).
+
+## Level 4 - Architectural Design and Scalability
+
+### Objective of level 4
+
+Redesign the application to be modular, maintainable, and scalable by applying good architectural practices and design patterns.
+
+### Requirements of level 4
+
+- Modularization of code and organization into folders.
+- Implementation of design patterns such as the Provider Pattern and Container-Presenter Pattern.
+- Advanced state management with Redux or Zustand and handling side effects with middleware.
+- Optimization techniques such as lazy loading and memoization.
+- Coverage of unit, integration, and end-to-end tests.
+- Quality and clarity of documentation, including diagrams and explanations of architectural decisions.
