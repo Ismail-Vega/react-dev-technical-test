@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useCallback, useState, useMemo } from "react";
 import { Box } from "@mui/material";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
@@ -16,45 +16,56 @@ const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingList, setEditingList] = useState<number | null>(null);
 
-  const handleAddOrEditList = (listName: string) => {
-    if (listName.trim() !== "") {
-      if (editingList) {
-        dispatch({
-          type: StateActionTypes.EDIT_TODO_LIST,
-          payload: {
-            id: editingList,
-            list: { ...state.lists[editingList], name: listName },
-          },
-        });
-      } else {
-        const listId = Date.now();
-        const newList = {
-          id: listId,
-          name: listName,
-          todoList: [],
-        };
+  const handleAddOrEditList = useCallback(
+    (listName: string) => {
+      if (listName.trim() !== "") {
+        if (editingList !== null) {
+          dispatch({
+            type: StateActionTypes.EDIT_TODO_LIST,
+            payload: {
+              id: editingList,
+              list: { ...state.lists[editingList], name: listName },
+            },
+          });
+        } else {
+          const listId = Date.now();
+          const newList = {
+            id: listId,
+            name: listName,
+            todoList: [],
+          };
 
-        dispatch({
-          type: StateActionTypes.ADD_TODO_LIST,
-          payload: { id: listId, list: newList },
-        });
+          dispatch({
+            type: StateActionTypes.ADD_TODO_LIST,
+            payload: { id: listId, list: newList },
+          });
+        }
+        setIsModalOpen(false);
+        setEditingList(null);
       }
-      setIsModalOpen(false);
-      setEditingList(null);
-    }
-  };
+    },
+    [dispatch, editingList, state.lists]
+  );
 
-  const handleOpenModal = (id: number | null) => {
+  const handleOpenModal = useCallback((id: number | null) => {
     setEditingList(id);
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const confirmDeleteList = (id: number) => {
-    dispatch({
-      type: StateActionTypes.DELETE_TODO_LIST,
-      payload: { listId: id },
-    });
-  };
+  const confirmDeleteList = useCallback(
+    (id: number) => {
+      dispatch({
+        type: StateActionTypes.DELETE_TODO_LIST,
+        payload: { listId: id },
+      });
+    },
+    [dispatch]
+  );
+
+  const rowMenuActions = useMemo(
+    () => [handleOpenModal, confirmDeleteList],
+    [handleOpenModal, confirmDeleteList]
+  );
 
   return (
     <Container>
@@ -82,7 +93,7 @@ const App = () => {
         </Button>
       </Box>
 
-      <ListsTable rowMenuActions={[handleOpenModal, confirmDeleteList]} />
+      <ListsTable rowMenuActions={rowMenuActions} />
 
       <AppModal
         title="Create/Edit list"

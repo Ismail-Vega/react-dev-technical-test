@@ -1,19 +1,16 @@
-import { useCallback, useContext, useMemo, useState } from "react";
+import { ChangeEvent, useCallback, useContext, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-import { Box } from "@mui/material";
-import List from "@mui/material/List";
-import AppBar from "@mui/material/AppBar";
-import Drawer from "@mui/material/Drawer";
-import Divider from "@mui/material/Divider";
-import Toolbar from "@mui/material/Toolbar";
+import {
+  Box,
+  AppBar,
+  Drawer,
+  Toolbar,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import ListIcon from "@mui/icons-material/List";
-import HomeIcon from "@mui/icons-material/Home";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
 
-import ListNavItem from "../ListNavItem";
+import DrawerContent from "./DrawerContent";
 import { TodoContext } from "../../state/TodoProvider";
 import { SideBarLayoutProps } from "./SideBarLayoutProps";
 
@@ -23,48 +20,42 @@ const SideBarLayout = ({ children }: SideBarLayoutProps) => {
   const navigate = useNavigate();
   const { state } = useContext(TodoContext);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleDrawerToggle = useCallback(() => {
-    setMobileOpen(!mobileOpen);
-  }, [mobileOpen]);
+    setMobileOpen((prevMobileOpen) => !prevMobileOpen);
+  }, []);
 
-  const drawer = useMemo(
-    () => (
-      <div>
-        <Toolbar
-          sx={{
-            backgroundColor: (t) =>
-              t.palette.mode === "light"
-                ? t.palette.grey[50]
-                : t.palette.grey[900],
-          }}
-        >
-          <ListNavItem
-            path="/"
-            key="home"
-            value="Home"
-            icon={<HomeIcon />}
-            navigate={navigate}
-            onClick={handleDrawerToggle}
-          />
-        </Toolbar>
+  const handleSearchChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  }, []);
 
-        <Divider />
-        <List>
-          {Object.keys(state.lists).map((id) => (
-            <ListNavItem
-              key={id}
-              icon={<ListIcon />}
-              navigate={navigate}
-              path={`/list/${id}`}
-              value={state.lists[Number(id)].name}
-              onClick={handleDrawerToggle}
-            />
-          ))}
-        </List>
-      </div>
-    ),
-    [handleDrawerToggle, navigate, state.lists]
+  const handleClearSearch = useCallback(() => {
+    setSearchTerm("");
+  }, []);
+
+  const listsArray = useMemo(() => {
+    return Object.keys(state.lists).map((id) => ({
+      id,
+      name: state.lists[Number(id)].name,
+    }));
+  }, [state.lists]);
+
+  const filteredLists = useMemo(() => {
+    return listsArray.filter((list) =>
+      list.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [listsArray, searchTerm]);
+
+  const drawer = (
+    <DrawerContent
+      searchTerm={searchTerm}
+      onSearchChange={handleSearchChange}
+      onClearSearch={handleClearSearch}
+      filteredLists={filteredLists}
+      navigate={navigate}
+      handleDrawerToggle={handleDrawerToggle}
+    />
   );
 
   return (
@@ -86,7 +77,6 @@ const SideBarLayout = ({ children }: SideBarLayoutProps) => {
           >
             <MenuIcon />
           </IconButton>
-
           <Typography variant="h6" sx={{ margin: "auto" }}>
             React Developer Technical Test
           </Typography>
