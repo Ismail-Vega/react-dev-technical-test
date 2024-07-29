@@ -1,12 +1,11 @@
 import {
-  MouseEvent,
-  ReactNode,
-  useCallback,
-  useContext,
+  memo,
   useMemo,
+  useContext,
   useState,
+  ReactNode,
+  MouseEvent,
 } from "react";
-
 import { Box } from "@mui/material";
 import Table from "@mui/material/Table";
 import Paper from "@mui/material/Paper";
@@ -20,48 +19,44 @@ import TableContainer from "@mui/material/TableContainer";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import ListItemButton from "@mui/material/ListItemButton";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
-
+import Typography from "@mui/material/Typography";
 import { TodoContext } from "../../state/TodoProvider";
 import { ListTableProps } from "./ListTableProps";
 
 interface Data {
+  id: number;
   name: string;
-  actions: ReactNode;
 }
 
-function createData(name: string, actions: ReactNode): Data {
-  return {
-    name,
-    actions,
-  };
+function createData(id: number, name: string): Data {
+  return { id, name };
 }
+
+const ListItem = memo(
+  ({ name, actions }: { name: string; actions: ReactNode }) => (
+    <TableRow>
+      <TableCell component="th" scope="row">
+        {name}
+      </TableCell>
+      <TableCell align="right">{actions}</TableCell>
+    </TableRow>
+  )
+);
 
 const ListsTable = ({ rowMenuActions }: ListTableProps) => {
   const { state } = useContext(TodoContext);
-  const [openPopper, setOpenPopper] = useState<{ [key: number]: boolean }>({});
-  const [anchorEl, setAnchorEl] = useState<{
-    [key: number]: HTMLButtonElement | null;
-  }>({});
+  const [openPopper, setOpenPopper] = useState<number | null>(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
-  const handleClick = useCallback(
+  const handleClick =
     (listId: number) => (event: MouseEvent<HTMLButtonElement>) => {
-      setAnchorEl((prev) => ({
-        ...prev,
-        [listId]: event.currentTarget,
-      }));
-      setOpenPopper((prev) => ({
-        ...prev,
-        [listId]: !prev[listId],
-      }));
-    },
-    []
-  );
+      setAnchorEl(event.currentTarget);
+      setOpenPopper(openPopper === listId ? null : listId);
+    };
 
-  const handleClosePopper = (listId: number) => () => {
-    setOpenPopper((prev) => ({
-      ...prev,
-      [listId]: false,
-    }));
+  const handleClosePopper = () => {
+    setOpenPopper(null);
+    setAnchorEl(null);
   };
 
   const rows = useMemo(
@@ -69,70 +64,13 @@ const ListsTable = ({ rowMenuActions }: ListTableProps) => {
       Object.keys(state.lists).map((listId) => {
         const parsedId = Number(listId);
         const { name } = state.lists[parsedId];
-
-        const tablePopper = (
-          <Box key={listId}>
-            <IconButton
-              aria-label="edit/delete"
-              onClick={handleClick(parsedId)}
-            >
-              <MoreHorizIcon />
-            </IconButton>
-
-            <Popper
-              open={!!anchorEl[parsedId] && openPopper[parsedId]}
-              anchorEl={anchorEl[parsedId]}
-              placement="bottom-end"
-              modifiers={[{ name: "offset", options: { offset: [0, 8] } }]}
-            >
-              <ClickAwayListener onClickAway={handleClosePopper(parsedId)}>
-                <Paper>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "start",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <ListItemButton
-                      sx={{ width: "100%" }}
-                      onClick={() => {
-                        rowMenuActions[0](parsedId);
-
-                        setOpenPopper((prev) => ({
-                          ...prev,
-                          [parsedId]: false,
-                        }));
-                      }}
-                    >
-                      Edit
-                    </ListItemButton>
-                    <ListItemButton
-                      onClick={() => {
-                        rowMenuActions[1](parsedId);
-
-                        setOpenPopper((prev) => ({
-                          ...prev,
-                          [parsedId]: false,
-                        }));
-                      }}
-                    >
-                      Delete
-                    </ListItemButton>
-                  </Box>
-                </Paper>
-              </ClickAwayListener>
-            </Popper>
-          </Box>
-        );
-
-        return createData(name, tablePopper);
+        return createData(parsedId, name);
       }),
-    [anchorEl, handleClick, openPopper, rowMenuActions, state.lists]
+    [state.lists]
   );
 
   return rows.length ? (
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} sx={{ mb: 2 }}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
@@ -141,19 +79,68 @@ const ListsTable = ({ rowMenuActions }: ListTableProps) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow
-              key={row.name}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell align="left">{row.name}</TableCell>
-              <TableCell align="right">{row.actions}</TableCell>
-            </TableRow>
-          ))}
+          {rows.map((row) => {
+            const actions = (
+              <Box>
+                <IconButton
+                  aria-label="edit/delete"
+                  onClick={handleClick(row.id)}
+                >
+                  <MoreHorizIcon />
+                </IconButton>
+                <Popper
+                  open={openPopper === row.id}
+                  anchorEl={anchorEl}
+                  placement="bottom-end"
+                  modifiers={[{ name: "offset", options: { offset: [0, 8] } }]}
+                >
+                  <ClickAwayListener onClickAway={handleClosePopper}>
+                    <Paper>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "start",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <ListItemButton
+                          sx={{ width: "100%" }}
+                          onClick={() => {
+                            rowMenuActions[0](row.id);
+                            handleClosePopper();
+                          }}
+                        >
+                          Edit
+                        </ListItemButton>
+                        <ListItemButton
+                          onClick={() => {
+                            rowMenuActions[1](row.id);
+                            handleClosePopper();
+                          }}
+                        >
+                          Delete
+                        </ListItemButton>
+                      </Box>
+                    </Paper>
+                  </ClickAwayListener>
+                </Popper>
+              </Box>
+            );
+
+            return <ListItem key={row.id} name={row.name} actions={actions} />;
+          })}
         </TableBody>
       </Table>
     </TableContainer>
-  ) : null;
+  ) : (
+    <Typography
+      variant="body1"
+      color="textSecondary"
+      sx={{ textAlign: "center", marginTop: "20px" }}
+    >
+      No Lists Found
+    </Typography>
+  );
 };
 
 export default ListsTable;

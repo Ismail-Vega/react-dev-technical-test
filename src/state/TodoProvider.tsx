@@ -1,9 +1,9 @@
 import { createContext, Dispatch, useEffect, useReducer } from "react";
-import { todoReducer } from "./TodoReducer";
 import { StateAction, StateActionTypes, StoreState } from "./types";
 import { TodoProviderProps } from "./TodoProviderProps";
 import { useFetchTodos } from "../hooks/useFetchTodos";
-import { transformTodosToTodoLists } from "../utils/transformTodos";
+import { todoReducer } from "./todoReducer";
+import { transformTodosToTodoLists } from "../utils";
 
 const initialState = {
   lists: {},

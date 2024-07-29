@@ -1,7 +1,7 @@
 import { AxiosRequestHeaders } from "axios";
-import { apiClient } from "./apiClient";
 import { apiResponseHandler } from "./apiResponseHandler";
 import cache from "./apiCache";
+import { apiClient } from "./apiClient";
 
 export const fetchFromApi = async (
   method: string,
