@@ -18,63 +18,61 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-const TodoItem = memo(
-  ({
-    todo,
-    onDelete,
-    onStatusChange,
-    isPopupOpen,
-    onPopupOpen,
-    onPopupClose,
-  }: TodoItemProps) => {
-    const { id, title, userId, completed } = todo;
-    const anchorEl = useRef<HTMLElement>(null);
+const TodoItem = memo(function TodoItem({
+  todo,
+  onDelete,
+  onStatusChange,
+  isPopupOpen,
+  onPopupOpen,
+  onPopupClose,
+}: TodoItemProps) {
+  const { id, title, userId, completed } = todo;
+  const anchorEl = useRef<HTMLElement>(null);
 
-    const handleStatusChange = () => {
-      onStatusChange(id, userId);
-    };
+  const handleStatusChange = () => {
+    onStatusChange(id, userId);
+  };
 
-    const handleTodoDelete = () => {
-      onDelete(id, userId);
-    };
+  const handleTodoDelete = () => {
+    onDelete(id, userId);
+  };
 
-    const handlePopupOpen = (event: MouseEvent) => {
-      event.stopPropagation();
-      onPopupOpen(id, event);
-    };
+  const handlePopupOpen = (event: MouseEvent) => {
+    event.stopPropagation();
+    onPopupOpen(id, event);
+  };
 
-    return (
-      <>
-        <Box ref={anchorEl}>
-          <Item
-            onClick={handleStatusChange}
-            style={{
-              display: "flex",
-              textAlign: "start",
-              alignItems: "center",
-              justifyContent: "space-between",
-              textDecoration: completed ? "line-through" : "none",
-            }}
-          >
-            <Typography variant="h6">{title} </Typography>
-            <Tooltip title="Delete">
-              <IconButton aria-label="delete" onClick={handlePopupOpen}>
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
-          </Item>
-        </Box>
-        <ConfirmationPopup
-          title="Delete Task"
-          open={isPopupOpen}
-          onClose={onPopupClose}
-          anchorEl={anchorEl.current}
-          onConfirm={handleTodoDelete}
-          description="Are you sure you want to proceed?"
-        />
-      </>
-    );
-  }
-);
+  return (
+    <>
+      <Box ref={anchorEl}>
+        <Item
+          onClick={handleStatusChange}
+          style={{
+            display: "flex",
+            textAlign: "start",
+            alignItems: "center",
+            justifyContent: "space-between",
+            textDecoration: completed ? "line-through" : "none",
+          }}
+        >
+          <Typography variant="h6">{title} </Typography>
+          <Tooltip title="Delete">
+            <IconButton aria-label="delete" onClick={handlePopupOpen}>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </Item>
+      </Box>
+      <ConfirmationPopup
+        title="Delete Task"
+        open={isPopupOpen}
+        onClose={onPopupClose}
+        anchorEl={anchorEl.current}
+        onConfirm={handleTodoDelete}
+        description="Are you sure you want to proceed?"
+      />
+    </>
+  );
+});
 
 export default TodoItem;

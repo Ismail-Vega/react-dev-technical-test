@@ -20,6 +20,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import ListItemButton from "@mui/material/ListItemButton";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import Typography from "@mui/material/Typography";
+
 import { TodoContext } from "../../state/TodoProvider";
 import { ListTableProps } from "./ListTableProps";
 
@@ -32,16 +33,22 @@ function createData(id: number, name: string): Data {
   return { id, name };
 }
 
-const ListItem = memo(
-  ({ name, actions }: { name: string; actions: ReactNode }) => (
+const ListItem = memo(function ListItem({
+  name,
+  actions,
+}: {
+  name: string;
+  actions: ReactNode;
+}) {
+  return (
     <TableRow>
       <TableCell component="th" scope="row">
         {name}
       </TableCell>
       <TableCell align="right">{actions}</TableCell>
     </TableRow>
-  )
-);
+  );
+});
 
 const ListsTable = ({ rowMenuActions }: ListTableProps) => {
   const { state } = useContext(TodoContext);

@@ -4,11 +4,16 @@ import { List, Typography } from "@mui/material";
 
 import ListNavItem from "../ListNavItem";
 import { NavListProps } from "./NavListProps";
+import { MAX_NAV_ITEMS_SHOWN } from "../../constants";
 
-const NavList = memo(
-  ({ filteredLists, navigate, handleDrawerToggle }: NavListProps) => (
+const NavList = memo(function NavList({
+  filteredLists,
+  navigate,
+  handleDrawerToggle,
+}: NavListProps) {
+  return (
     <List>
-      {filteredLists.slice(0, 5).map(({ id, name }) => (
+      {filteredLists.slice(0, MAX_NAV_ITEMS_SHOWN).map(({ id, name }) => (
         <ListNavItem
           key={id}
           icon={<ListIcon />}
@@ -18,13 +23,13 @@ const NavList = memo(
           onClick={handleDrawerToggle}
         />
       ))}
-      {filteredLists.length > 5 && (
+      {filteredLists.length > MAX_NAV_ITEMS_SHOWN && (
         <Typography variant="body2" sx={{ ml: 2 }}>
-          {`+ ${filteredLists.length - 5} more items`}
+          {`+ ${filteredLists.length - MAX_NAV_ITEMS_SHOWN} more items`}
         </Typography>
       )}
     </List>
-  )
-);
+  );
+});
 
 export default NavList;

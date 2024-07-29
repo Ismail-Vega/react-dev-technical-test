@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
+
 import { Todo } from "../components/TodoItem/TodoItemProps";
 import { fetchFromApi } from "../services";
+import { API_SUCCESS_CODE } from "../constants";
 
 /**
  * Custom hook to fetch todos from the API.
@@ -27,7 +29,7 @@ export const useFetchTodos = () => {
 
         if (error) {
           setError(error);
-        } else if (status === 200 && data) {
+        } else if (status === API_SUCCESS_CODE && data) {
           setTodos(data);
         }
         setLoading(false);

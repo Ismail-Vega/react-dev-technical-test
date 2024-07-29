@@ -5,6 +5,7 @@ import NavList from "../../NavList";
 import SearchBar from "../../SearchBar";
 import ListNavItem from "../../ListNavItem";
 import { DrawerContentProps } from "./DrawerContentProps";
+import { PALETTE_DARK_GREY, PALETTE_LIGHT_GREY } from "../../../constants";
 
 const DrawerContent = ({
   searchTerm,
@@ -18,7 +19,9 @@ const DrawerContent = ({
     <Toolbar
       sx={{
         backgroundColor: (t) =>
-          t.palette.mode === "light" ? t.palette.grey[50] : t.palette.grey[900],
+          t.palette.mode === "light"
+            ? t.palette.grey[PALETTE_LIGHT_GREY]
+            : t.palette.grey[PALETTE_DARK_GREY],
       }}
     >
       <ListNavItem

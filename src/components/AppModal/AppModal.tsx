@@ -1,10 +1,11 @@
 import ReactDOM from "react-dom";
-import { AppModalProps } from "./AppModalProps";
 import { Box } from "@mui/material/";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
+
+import { AppModalProps } from "./AppModalProps";
 
 const AppModal = ({ isOpen, onClose, title, children }: AppModalProps) => {
   if (!isOpen) return null;

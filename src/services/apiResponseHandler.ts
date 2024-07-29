@@ -1,4 +1,6 @@
 import axios, { AxiosResponse } from "axios";
+
+import { API_SERVER_ERROR_CODE, API_SUCCESS_CODE } from "../constants";
 import { TodosResponse, ApiResponse } from "./types/apiResponse";
 
 export const apiResponseHandler = async (
@@ -7,7 +9,7 @@ export const apiResponseHandler = async (
   try {
     const { status, data } = await request;
 
-    if (status === 200 && data) {
+    if (status === API_SUCCESS_CODE && data) {
       return { data, status };
     }
 
@@ -21,7 +23,7 @@ export const apiResponseHandler = async (
       const message = error.response?.data?.error || error.message;
 
       return {
-        status: error.response?.status || 500,
+        status: error.response?.status || API_SERVER_ERROR_CODE,
         error: message,
         data: [],
       };

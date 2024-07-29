@@ -1,10 +1,15 @@
 import { memo } from "react";
 import { TextField, IconButton, InputAdornment } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
+
 import { SearchBarProps } from "./SearchBarProps";
 
-const SearchBar = memo(
-  ({ searchTerm, onSearchChange, onClearSearch }: SearchBarProps) => (
+const SearchBar = memo(function SearchBar({
+  searchTerm,
+  onSearchChange,
+  onClearSearch,
+}: SearchBarProps) {
+  return (
     <TextField
       fullWidth
       label="Search lists"
@@ -23,7 +28,7 @@ const SearchBar = memo(
         ),
       }}
     />
-  )
-);
+  );
+});
 
 export default SearchBar;

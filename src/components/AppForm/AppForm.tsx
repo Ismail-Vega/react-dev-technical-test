@@ -1,5 +1,4 @@
 import { FormEvent, useState, useRef, useEffect } from "react";
-
 import { Box } from "@mui/material/";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
@@ -7,9 +6,8 @@ import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
 
 import { AppFormProps } from "./AppFormProps";
-
-const MIN_TITLE_LENGTH = 3;
-const MAX_TITLE_LENGTH = 50;
+import { MAX_TITLE_LENGTH } from "../../constants";
+import { handleFormValidation } from "../../utils";
 
 const AppForm = ({
   icon,
@@ -29,15 +27,11 @@ const AppForm = ({
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (title.trim().length < MIN_TITLE_LENGTH) {
-      setError(true);
-      setErrorMsg(`Title must be at least ${MIN_TITLE_LENGTH} characters.`);
-      return;
-    }
+    const validation = handleFormValidation(title);
 
-    if (title.trim().length > MAX_TITLE_LENGTH) {
+    if (!validation.isValid) {
       setError(true);
-      setErrorMsg(`Title must be no more than ${MAX_TITLE_LENGTH} characters.`);
+      setErrorMsg(validation.errorMsg);
       return;
     }
 
@@ -75,7 +69,9 @@ const AppForm = ({
             inputProps={{ maxLength: MAX_TITLE_LENGTH }}
             sx={{ backgroundColor: "rgb(232,240,254)" }}
             onChange={(e) => setTitle(e.target.value)}
-            helperText={error ? errorMsg : `${title.length}/${MAX_TITLE_LENGTH}`}
+            helperText={
+              error ? errorMsg : `${title.length}/${MAX_TITLE_LENGTH}`
+            }
           />
         </FormControl>
 
