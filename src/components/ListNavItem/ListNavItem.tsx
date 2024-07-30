@@ -12,15 +12,16 @@ const ListNavItem = ({
   onClick,
   navigate,
 }: ListNavItemProps) => (
-  <ListItem disablePadding>
+  <ListItem disablePadding data-testid="list-nav-item">
     <ListItemButton
       onClick={() => {
         navigate(path);
         if (onClick) onClick();
       }}
+      data-testid="list-nav-item-button"
     >
-      {<ListItemIcon>{icon}</ListItemIcon>}
-      <ListItemText primary={value} />
+      <ListItemIcon data-testid="list-nav-item-icon">{icon}</ListItemIcon>
+      <ListItemText primary={value} data-testid="list-nav-item-text" />
     </ListItemButton>
   </ListItem>
 );

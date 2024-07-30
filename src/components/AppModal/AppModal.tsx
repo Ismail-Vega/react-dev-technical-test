@@ -13,6 +13,7 @@ const AppModal = ({ isOpen, onClose, title, children }: AppModalProps) => {
   return ReactDOM.createPortal(
     <Container
       maxWidth={false}
+      data-testid="modal-container"
       sx={{
         top: 0,
         left: 0,
@@ -36,11 +37,20 @@ const AppModal = ({ isOpen, onClose, title, children }: AppModalProps) => {
             borderRadius: 1,
             backgroundColor: "#F0F0F0",
           }}
+          data-testid="modal-box"
         >
-          <Typography variant="h6">{title}</Typography>
-          <Box sx={{ mt: 2 }}>{children}</Box>
+          <Typography variant="h6" data-testid="modal-title">
+            {title}
+          </Typography>
+          <Box sx={{ mt: 2 }} data-testid="modal-content">
+            {children}
+          </Box>
           <Box sx={{ display: "flex", justifyContent: "end" }}>
-            <Button onClick={onClose} sx={{ mt: 2, ml: "auto" }}>
+            <Button
+              onClick={onClose}
+              sx={{ mt: 2, ml: "auto" }}
+              data-testid="modal-close-button"
+            >
               Close
             </Button>
           </Box>

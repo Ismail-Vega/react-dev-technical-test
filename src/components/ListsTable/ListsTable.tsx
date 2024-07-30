@@ -77,6 +77,7 @@ const ListsTable = ({ rowMenuActions }: ListTableProps) => {
         variant="body1"
         color="textSecondary"
         sx={{ textAlign: "center", marginTop: "20px" }}
+        data-testid="loading-text"
       >
         loading...
       </Typography>
@@ -98,6 +99,7 @@ const ListsTable = ({ rowMenuActions }: ListTableProps) => {
                 <IconButton
                   aria-label="edit/delete"
                   onClick={handleClick(row.id)}
+                  data-testid={`more-icon-${row.id}`}
                 >
                   <MoreHorizIcon />
                 </IconButton>
@@ -106,6 +108,7 @@ const ListsTable = ({ rowMenuActions }: ListTableProps) => {
                   anchorEl={anchorEl}
                   placement="bottom-end"
                   modifiers={[{ name: "offset", options: { offset: [0, 8] } }]}
+                  data-testid={`popper-${row.id}`}
                 >
                   <ClickAwayListener onClickAway={handleClosePopper}>
                     <Paper>
@@ -122,6 +125,7 @@ const ListsTable = ({ rowMenuActions }: ListTableProps) => {
                             rowMenuActions[0](row.id);
                             handleClosePopper();
                           }}
+                          data-testid={`edit-button-${row.id}`}
                         >
                           Edit
                         </ListItemButton>
@@ -130,6 +134,7 @@ const ListsTable = ({ rowMenuActions }: ListTableProps) => {
                             rowMenuActions[1](row.id);
                             handleClosePopper();
                           }}
+                          data-testid={`delete-button-${row.id}`}
                         >
                           Delete
                         </ListItemButton>
@@ -150,6 +155,7 @@ const ListsTable = ({ rowMenuActions }: ListTableProps) => {
       variant="body1"
       color="textSecondary"
       sx={{ textAlign: "center", marginTop: "20px" }}
+      data-testid="no-lists-text"
     >
       No Lists Found
     </Typography>

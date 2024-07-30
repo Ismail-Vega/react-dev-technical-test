@@ -44,7 +44,7 @@ const TodoItem = memo(function TodoItem({
 
   return (
     <>
-      <Box ref={anchorEl}>
+      <Box ref={anchorEl} data-testid={`todo-item-${id}`}>
         <Item
           onClick={handleStatusChange}
           style={{
@@ -54,10 +54,15 @@ const TodoItem = memo(function TodoItem({
             justifyContent: "space-between",
             textDecoration: completed ? "line-through" : "none",
           }}
+          data-testid={`todo-item-title-${id}`}
         >
-          <Typography variant="h6">{title} </Typography>
+          <Typography variant="h6">{title}</Typography>
           <Tooltip title="Delete">
-            <IconButton aria-label="delete" onClick={handlePopupOpen}>
+            <IconButton
+              aria-label="delete"
+              onClick={handlePopupOpen}
+              data-testid={`todo-item-delete-button-${id}`}
+            >
               <DeleteIcon />
             </IconButton>
           </Tooltip>
@@ -70,6 +75,7 @@ const TodoItem = memo(function TodoItem({
         anchorEl={anchorEl.current}
         onConfirm={handleTodoDelete}
         description="Are you sure you want to proceed?"
+        data-testid={`todo-item-confirmation-popup-${id}`}
       />
     </>
   );

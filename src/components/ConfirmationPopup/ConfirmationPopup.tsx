@@ -54,17 +54,34 @@ const ConfirmationPopup = ({
               alignItems: "center",
             }}
           >
-            <Typography variant="h6" gutterBottom>
+            <Typography
+              data-testid="confirmation-popup-title"
+              variant="h6"
+              gutterBottom
+            >
               {title}
             </Typography>
-            <Typography variant="body2" paragraph>
+            <Typography
+              data-testid="confirmation-popup-description"
+              variant="body2"
+              paragraph
+            >
               {description}
             </Typography>
             <Box sx={{ display: "flex", gap: 2 }}>
-              <Button onClick={onClose} variant="outlined">
+              <Button
+                data-testid="cancel-button"
+                onClick={onClose}
+                variant="outlined"
+              >
                 Cancel
               </Button>
-              <Button onClick={onConfirm} variant="contained" color="primary">
+              <Button
+                data-testid="confirm-button"
+                onClick={onConfirm}
+                variant="contained"
+                color="primary"
+              >
                 Confirm
               </Button>
             </Box>

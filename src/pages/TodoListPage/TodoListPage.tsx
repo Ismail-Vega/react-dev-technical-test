@@ -28,6 +28,7 @@ const TodoListPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const lists = useSelector((state: RootState) => state.todos.lists);
+  const error = useSelector((state: RootState) => state.todos.error);
   const loading = useSelector((state: RootState) => state.todos.loading);
   const [updateTodo] = useUpdateTodoMutation();
   const [createTodo] = useCreateTodoMutation();
@@ -43,6 +44,12 @@ const TodoListPage = () => {
       navigate("/");
     }
   }, [idParam, lists, navigate]);
+
+  useEffect(() => {
+    if (error) {
+      enqueueSnackbar(error, { variant: "error", autoHideDuration: 3000 });
+    }
+  }, [error]);
 
   const filteredList = useMemo(() => {
     if (idParam && lists[idParam]) {
@@ -153,6 +160,7 @@ const TodoListPage = () => {
   return (
     <Container>
       <Box
+        data-testid="todo-list-page"
         sx={{
           marginTop: 12,
           width: "100%",
@@ -169,7 +177,9 @@ const TodoListPage = () => {
             justifyContent: "space-between",
           }}
         >
-          <Typography variant="h6">{name} List</Typography>
+          <Typography variant="h6" data-testid="todo-list-title">
+            {name} List
+          </Typography>
 
           <ToggleButtonGroup
             size="small"
@@ -182,18 +192,34 @@ const TodoListPage = () => {
             }}
             aria-label="todo filter"
           >
-            <ToggleButton value="all" aria-label="all todos">
+            <ToggleButton
+              value="all"
+              aria-label="all todos"
+              data-testid="filter-toggle-all"
+            >
               All
             </ToggleButton>
-            <ToggleButton value="completed" aria-label="completed todos">
+            <ToggleButton
+              value="completed"
+              aria-label="completed todos"
+              data-testid="filter-toggle-completed"
+            >
               Completed
             </ToggleButton>
-            <ToggleButton value="pending" aria-label="pending todos">
+            <ToggleButton
+              value="pending"
+              aria-label="pending todos"
+              data-testid="filter-toggle-pending"
+            >
               Pending
             </ToggleButton>
           </ToggleButtonGroup>
 
-          <Button variant="contained" onClick={() => setIsModalOpen(true)}>
+          <Button
+            variant="contained"
+            onClick={() => setIsModalOpen(true)}
+            data-testid="add-task-button"
+          >
             Create task
           </Button>
         </Box>
@@ -224,6 +250,7 @@ const TodoListPage = () => {
       <Backdrop
         open={loading}
         sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        data-testid="loading-backdrop"
       >
         <CircularProgress color="inherit" />
       </Backdrop>

@@ -21,7 +21,7 @@ const TodoList = ({
   }, []);
 
   return (
-    <Stack spacing={2} width="100%">
+    <Stack spacing={2} width="100%" data-testid="todo-list">
       {todoList.map((todo) => (
         <TodoItem
           todo={todo}
