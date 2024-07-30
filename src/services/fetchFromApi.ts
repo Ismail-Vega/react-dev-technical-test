@@ -1,28 +1,44 @@
+import { BaseQueryFn } from "@reduxjs/toolkit/query";
 import { AxiosRequestHeaders } from "axios";
 
 import cache from "./apiCache";
 import { apiClient } from "./apiClient";
+import { API_SERVER_ERROR_MESSAGE } from "../constants";
 import { apiResponseHandler } from "./apiResponseHandler";
 
-export const fetchFromApi = async (
-  method: string,
-  query: string,
-  data?: unknown,
-  headers?: AxiosRequestHeaders
-) => {
-  const cacheKey = `${method}:${query}`;
+const fetchFromApi: BaseQueryFn<
+  {
+    method: string;
+    url: string;
+    body?: unknown;
+    headers?: AxiosRequestHeaders;
+  },
+  unknown,
+  string | undefined
+> = async (args) => {
+  const { method, url, body, headers } = args;
+  const cacheKey = `${method}:${url}`;
 
   if (cache.has(cacheKey)) {
     const cachedRes = cache.get(cacheKey);
-    if (cachedRes !== undefined) return cachedRes;
+
+    if (cachedRes !== undefined && method.toLocaleUpperCase() === "GET")
+      return { data: cachedRes.data };
   }
 
-  const request = apiClient(method, query, data, headers);
-  const response = await apiResponseHandler(request);
+  try {
+    const request = apiClient(method, url, body, headers);
+    const response = await apiResponseHandler(request);
 
-  if (!response.error) {
-    cache.set(cacheKey, response);
+    if (!response.error) {
+      if (method.toLocaleUpperCase() === "GET") cache.set(cacheKey, response);
+      return { data: response.data };
+    }
+
+    return { error: response.error };
+  } catch {
+    return { error: API_SERVER_ERROR_MESSAGE };
   }
-
-  return response;
 };
+
+export default fetchFromApi;

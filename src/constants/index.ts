@@ -6,4 +6,5 @@ export {
   PALETTE_DARK_GREY,
   API_SUCCESS_CODE,
   API_SERVER_ERROR_CODE,
+  API_SERVER_ERROR_MESSAGE
 } from "./constants";

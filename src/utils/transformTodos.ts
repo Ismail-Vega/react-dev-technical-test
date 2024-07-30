@@ -1,9 +1,7 @@
 import { Todo } from "../components/TodoItem/TodoItemProps";
-import { TodoList } from "../components/TodoList/TodoListProps";
+import { TodoLists } from "../store/types";
 
-export const transformTodosToTodoLists = (
-  todos: Todo[]
-): Record<number, TodoList> => {
+export const transformTodosToTodoLists = (todos: Todo[]): TodoLists => {
   return todos.reduce((acc, todo) => {
     const { userId } = todo;
 
@@ -17,5 +15,5 @@ export const transformTodosToTodoLists = (
 
     acc[userId].todoList.push(todo);
     return acc;
-  }, {} as Record<number, TodoList>);
+  }, {} as TodoLists);
 };

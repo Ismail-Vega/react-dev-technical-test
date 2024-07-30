@@ -5,3 +5,4 @@ export const PALETTE_LIGHT_GREY = 50;
 export const PALETTE_DARK_GREY = 900;
 export const API_SUCCESS_CODE = 200;
 export const API_SERVER_ERROR_CODE = 500;
+export const API_SERVER_ERROR_MESSAGE = "An unexpected error occurred.";

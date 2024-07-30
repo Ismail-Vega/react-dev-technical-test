@@ -1,14 +1,8 @@
-import {
-  memo,
-  useMemo,
-  useContext,
-  useState,
-  ReactNode,
-  MouseEvent,
-} from "react";
+import { memo, useMemo, useState, ReactNode, MouseEvent } from "react";
 import { Box } from "@mui/material";
 import Table from "@mui/material/Table";
 import Paper from "@mui/material/Paper";
+import { useSelector } from "react-redux";
 import Popper from "@mui/material/Popper";
 import TableRow from "@mui/material/TableRow";
 import TableBody from "@mui/material/TableBody";
@@ -21,7 +15,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import Typography from "@mui/material/Typography";
 
-import { TodoContext } from "../../state/TodoProvider";
+import { RootState } from "../../store";
 import { ListTableProps } from "./ListTableProps";
 
 interface Data {
@@ -51,7 +45,8 @@ const ListItem = memo(function ListItem({
 });
 
 const ListsTable = ({ rowMenuActions }: ListTableProps) => {
-  const { state } = useContext(TodoContext);
+  const lists = useSelector((state: RootState) => state.todos.lists);
+  const loading = useSelector((state: RootState) => state.todos.loading);
   const [openPopper, setOpenPopper] = useState<number | null>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
@@ -68,13 +63,24 @@ const ListsTable = ({ rowMenuActions }: ListTableProps) => {
 
   const rows = useMemo(
     () =>
-      Object.keys(state.lists).map((listId) => {
+      Object.keys(lists).map((listId) => {
         const parsedId = Number(listId);
-        const { name } = state.lists[parsedId];
+        const { name } = lists[parsedId];
         return createData(parsedId, name);
       }),
-    [state.lists]
+    [lists]
   );
+
+  if (loading)
+    return (
+      <Typography
+        variant="body1"
+        color="textSecondary"
+        sx={{ textAlign: "center", marginTop: "20px" }}
+      >
+        loading...
+      </Typography>
+    );
 
   return rows.length ? (
     <TableContainer component={Paper} sx={{ mb: 2 }}>

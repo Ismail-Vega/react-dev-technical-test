@@ -6,19 +6,19 @@ import {
   Navigate,
 } from "react-router-dom";
 
-import { TodoProvider } from "../state/TodoProvider";
 import ErrorBoundary from "../components/ErrorBoundary";
 
 const App = lazy(() => import("../App"));
 const SideBarLayout = lazy(() => import("../components/SideBarLayout"));
+const TodoContainer = lazy(() => import("../components/TodoContainer"));
 const TodoListPage = lazy(() => import("../pages/TodoListPage"));
 
 const AppRouter = () => {
   return (
     <Router>
-      <TodoProvider>
-        <ErrorBoundary>
-          <Suspense fallback={<div>Loading...</div>}>
+      <ErrorBoundary>
+        <Suspense fallback={<div>Loading...</div>}>
+          <TodoContainer>
             <SideBarLayout>
               <Routes>
                 <Route path="/" element={<App />} />
@@ -26,9 +26,9 @@ const AppRouter = () => {
                 <Route path="*" element={<Navigate to="/" />} />
               </Routes>
             </SideBarLayout>
-          </Suspense>
-        </ErrorBoundary>
-      </TodoProvider>
+          </TodoContainer>
+        </Suspense>
+      </ErrorBoundary>
     </Router>
   );
 };

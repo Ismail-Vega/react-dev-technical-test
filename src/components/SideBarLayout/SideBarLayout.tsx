@@ -1,4 +1,5 @@
-import { ChangeEvent, useCallback, useContext, useMemo, useState } from "react";
+import { ChangeEvent, useCallback, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -10,17 +11,18 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 
+import { RootState } from "../../store";
 import DrawerContent from "./DrawerContent";
-import { TodoContext } from "../../state/TodoProvider";
 import { SideBarLayoutProps } from "./SideBarLayoutProps";
 
 const drawerWidth = 240;
 
 const SideBarLayout = ({ children }: SideBarLayoutProps) => {
   const navigate = useNavigate();
-  const { state } = useContext(TodoContext);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const lists = useSelector((state: RootState) => state.todos.lists);
+  const loading = useSelector((state: RootState) => state.todos.loading);
 
   const handleDrawerToggle = useCallback(() => {
     setMobileOpen((prevMobileOpen) => !prevMobileOpen);
@@ -35,11 +37,11 @@ const SideBarLayout = ({ children }: SideBarLayoutProps) => {
   }, []);
 
   const listsArray = useMemo(() => {
-    return Object.keys(state.lists).map((id) => ({
+    return Object.keys(lists).map((id) => ({
       id,
-      name: state.lists[Number(id)].name,
+      name: lists[Number(id)].name,
     }));
-  }, [state.lists]);
+  }, [lists]);
 
   const filteredLists = useMemo(() => {
     return listsArray.filter((list) =>
@@ -55,6 +57,7 @@ const SideBarLayout = ({ children }: SideBarLayoutProps) => {
       filteredLists={filteredLists}
       navigate={navigate}
       handleDrawerToggle={handleDrawerToggle}
+      loading={loading}
     />
   );
 

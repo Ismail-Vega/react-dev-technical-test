@@ -1,6 +1,7 @@
 import { memo } from "react";
+import List from "@mui/material/List";
 import ListIcon from "@mui/icons-material/List";
-import { List, Typography } from "@mui/material";
+import Typography from "@mui/material/Typography";
 
 import ListNavItem from "../ListNavItem";
 import { NavListProps } from "./NavListProps";

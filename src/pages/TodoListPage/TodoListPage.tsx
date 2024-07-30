@@ -1,37 +1,52 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Box } from "@mui/material";
 import Button from "@mui/material/Button";
+import { enqueueSnackbar } from "notistack";
+import Backdrop from "@mui/material/Backdrop";
 import Container from "@mui/material/Container";
 import TaskIcon from "@mui/icons-material/Task";
 import Typography from "@mui/material/Typography";
 import ToggleButton from "@mui/material/ToggleButton";
+import { useDispatch, useSelector } from "react-redux";
+import CircularProgress from "@mui/material/CircularProgress";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 
 import AppForm from "../../components/AppForm";
 import TodoList from "../../components/TodoList";
 import AppModal from "../../components/AppModal";
-import { StateActionTypes } from "../../state/types";
-import { TodoContext } from "../../state/TodoProvider";
 import { Todo } from "../../components/TodoItem/TodoItemProps";
+import {
+  RootState,
+  useUpdateTodoMutation,
+  useCreateTodoMutation,
+  useDeleteTodoMutation,
+} from "../../store";
+import { setError, setLoading } from "../../store/slices/todoListsSlice";
 
 const TodoListPage = () => {
   const navigate = useNavigate();
-  const { state, dispatch } = useContext(TodoContext);
+  const dispatch = useDispatch();
+  const lists = useSelector((state: RootState) => state.todos.lists);
+  const loading = useSelector((state: RootState) => state.todos.loading);
+  const [updateTodo] = useUpdateTodoMutation();
+  const [createTodo] = useCreateTodoMutation();
+  const [deleteTodo] = useDeleteTodoMutation();
+
   const { id } = useParams<{ id: string }>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filter, setFilter] = useState<"all" | "completed" | "pending">("all");
   const idParam = Number(id);
 
   useEffect(() => {
-    if (!idParam || !state.lists[idParam]) {
+    if (!idParam || !lists[idParam]) {
       navigate("/");
     }
-  }, [idParam, state.lists, navigate]);
+  }, [idParam, lists, navigate]);
 
   const filteredList = useMemo(() => {
-    if (idParam && state.lists[idParam]) {
-      const { todoList } = state.lists[idParam];
+    if (idParam && lists[idParam]) {
+      const { todoList } = lists[idParam];
 
       return todoList && todoList.length
         ? todoList.filter((todo) => {
@@ -41,58 +56,99 @@ const TodoListPage = () => {
           })
         : [];
     } else return [];
-  }, [filter, idParam, state.lists]);
+  }, [filter, idParam, lists]);
 
   const toggleComplete = useCallback(
-    (todoId: number) => {
-      if (idParam) {
-        dispatch({
-          type: StateActionTypes.TOGGLE_TODO,
-          payload: { listId: idParam, todoId },
-        });
+    async (todoId: number) => {
+      try {
+        dispatch(setLoading(true));
+
+        if (idParam) {
+          const index = lists[idParam].todoList.findIndex(
+            (todo) => todo.id === todoId
+          );
+
+          if (index !== -1) {
+            const prevTodo = lists[idParam].todoList[index];
+
+            await updateTodo({
+              ...prevTodo,
+              completed: !prevTodo.completed,
+            });
+
+            enqueueSnackbar("Todo updated successfully.", {
+              variant: "success",
+              autoHideDuration: 3000,
+            });
+          }
+        }
+      } catch {
+        dispatch(setError("Failed to update todo"));
+      } finally {
+        dispatch(setLoading(false));
       }
     },
-    [dispatch, idParam]
+    [dispatch, idParam, lists, updateTodo]
   );
 
   const handleAddTodo = useCallback(
-    (title: string) => {
-      const newTodo: Todo = {
-        id: Date.now(),
-        title,
-        userId: idParam,
-        completed: false,
-      };
+    async (title: string) => {
+      try {
+        setIsModalOpen(false);
+        dispatch(setLoading(true));
 
-      if (idParam) {
-        dispatch({
-          type: StateActionTypes.ADD_TODO,
-          payload: { listId: idParam, todo: newTodo },
-        });
+        if (idParam) {
+          const newTodo: Partial<Todo> = {
+            title,
+            userId: idParam,
+            completed: false,
+          };
+
+          await createTodo(newTodo).unwrap();
+
+          enqueueSnackbar("Todo created successfully.", {
+            variant: "success",
+            autoHideDuration: 3000,
+          });
+        }
+      } catch {
+        dispatch(setError("Failed to create todo"));
+      } finally {
+        dispatch(setLoading(false));
       }
-
-      setIsModalOpen(false);
     },
-    [dispatch, idParam]
+    [createTodo, dispatch, idParam]
   );
 
   const handleDeleteTodo = useCallback(
-    (todoId: number) => {
-      if (idParam) {
-        dispatch({
-          type: StateActionTypes.DELETE_TODO,
-          payload: { listId: idParam, todoId },
-        });
-      }
+    async (todoId: number) => {
+      try {
+        setIsModalOpen(false);
+        dispatch(setLoading(true));
 
-      setIsModalOpen(false);
+        if (idParam) {
+          await deleteTodo({
+            id: todoId,
+            userId: idParam,
+          });
+
+          enqueueSnackbar("Todo deleted successfully.", {
+            variant: "success",
+            autoHideDuration: 3000,
+          });
+        }
+      } catch {
+        dispatch(setError("Failed to delete todo"));
+      } finally {
+        dispatch(setLoading(false));
+      }
     },
-    [dispatch, idParam]
+    [deleteTodo, dispatch, idParam]
   );
 
-  if (!idParam || !state.lists[idParam]) return null;
+  if (!idParam || !lists[idParam]) return null;
 
-  const { name } = state.lists[idParam];
+  const { name } = lists[idParam];
 
   return (
     <Container>
@@ -165,6 +221,12 @@ const TodoListPage = () => {
           />
         </AppModal>
       </Box>
+      <Backdrop
+        open={loading}
+        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </Container>
   );
 };

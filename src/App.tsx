@@ -1,18 +1,24 @@
-import { useContext, useCallback, useState, useMemo } from "react";
+import { useCallback, useState, useMemo } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { Box } from "@mui/material";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import TaskIcon from "@mui/icons-material/Task";
 import Typography from "@mui/material/Typography";
 
+import { RootState } from "./store";
 import AppForm from "./components/AppForm";
 import AppModal from "./components/AppModal";
-import { StateActionTypes } from "./state/types";
-import { TodoContext } from "./state/TodoProvider";
 import ListsTable from "./components/ListsTable";
+import {
+  addTodoList,
+  deleteTodoList,
+  updateTodoList,
+} from "./store/slices/todoListsSlice";
 
 const App = () => {
-  const { state, dispatch } = useContext(TodoContext);
+  const dispatch = useDispatch();
+  const lists = useSelector((state: RootState) => state.todos.lists);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingList, setEditingList] = useState<number | null>(null);
 
@@ -20,13 +26,12 @@ const App = () => {
     (listName: string) => {
       if (listName.trim() !== "") {
         if (editingList !== null) {
-          dispatch({
-            type: StateActionTypes.EDIT_TODO_LIST,
-            payload: {
+          dispatch(
+            updateTodoList({
               id: editingList,
-              list: { ...state.lists[editingList], name: listName },
-            },
-          });
+              list: { ...lists[editingList], name: listName },
+            })
+          );
         } else {
           const listId = Date.now();
           const newList = {
@@ -35,16 +40,13 @@ const App = () => {
             todoList: [],
           };
 
-          dispatch({
-            type: StateActionTypes.ADD_TODO_LIST,
-            payload: { id: listId, list: newList },
-          });
+          dispatch(addTodoList({ id: listId, list: newList }));
         }
         setIsModalOpen(false);
         setEditingList(null);
       }
     },
-    [dispatch, editingList, state.lists]
+    [dispatch, editingList, lists]
   );
 
   const handleOpenModal = useCallback((id: number | null) => {
@@ -54,10 +56,7 @@ const App = () => {
 
   const confirmDeleteList = useCallback(
     (id: number) => {
-      dispatch({
-        type: StateActionTypes.DELETE_TODO_LIST,
-        payload: { listId: id },
-      });
+      dispatch(deleteTodoList({ listId: id }));
     },
     [dispatch]
   );
@@ -104,7 +103,7 @@ const App = () => {
           label="List Name"
           icon={<TaskIcon />}
           onSubmit={handleAddOrEditList}
-          initialTitleValue={editingList ? state.lists[editingList]?.name : ""}
+          initialTitleValue={editingList ? lists[editingList]?.name : ""}
         />
       </AppModal>
     </Container>

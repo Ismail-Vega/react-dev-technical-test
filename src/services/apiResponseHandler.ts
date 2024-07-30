@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 
-import { API_SERVER_ERROR_CODE, API_SUCCESS_CODE } from "../constants";
+import { API_SERVER_ERROR_CODE, API_SERVER_ERROR_MESSAGE } from "../constants";
 import { TodosResponse, ApiResponse } from "./types/apiResponse";
 
 export const apiResponseHandler = async (
@@ -9,14 +9,14 @@ export const apiResponseHandler = async (
   try {
     const { status, data } = await request;
 
-    if (status === API_SUCCESS_CODE && data) {
+    if (data) {
       return { data, status };
     }
 
     return {
       status,
       data: [],
-      error: "An unexpected error occurred.",
+      error: "",
     };
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -29,6 +29,6 @@ export const apiResponseHandler = async (
       };
     }
 
-    return { status: 500, error: "An unexpected error occurred.", data: [] };
+    return { status: 500, error: API_SERVER_ERROR_MESSAGE, data: [] };
   }
 };

@@ -1,4 +1,6 @@
 import { Toolbar, Divider, Box } from "@mui/material";
+import List from "@mui/material/List";
+import Skeleton from "@mui/material/Skeleton";
 import HomeIcon from "@mui/icons-material/Home";
 
 import NavList from "../../NavList";
@@ -14,6 +16,7 @@ const DrawerContent = ({
   filteredLists,
   navigate,
   handleDrawerToggle,
+  loading,
 }: DrawerContentProps) => (
   <div>
     <Toolbar
@@ -41,11 +44,21 @@ const DrawerContent = ({
         onClearSearch={onClearSearch}
       />
     </Box>
-    <NavList
-      filteredLists={filteredLists}
-      navigate={navigate}
-      handleDrawerToggle={handleDrawerToggle}
-    />
+    {loading && filteredLists.length === 0 ? (
+      <List sx={{ width: 200 }}>
+        <Skeleton key="wave-1" animation="wave" />
+        <Skeleton key="wave-2" animation="wave" />
+        <Skeleton key="wave-3" animation="wave" />
+        <Skeleton key="wave-4" animation="wave" />
+        <Skeleton key="wave-5" animation="wave" />
+      </List>
+    ) : (
+      <NavList
+        filteredLists={filteredLists}
+        navigate={navigate}
+        handleDrawerToggle={handleDrawerToggle}
+      />
+    )}
   </div>
 );
 

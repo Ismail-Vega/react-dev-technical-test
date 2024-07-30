@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
 
-export interface TodoProviderProps {
+export interface TodoContainerProps {
   children: ReactNode;
 }
