@@ -36,7 +36,6 @@ module.exports = {
       },
     ],
     "no-console": "warn",
-    semi: ["error", "always"],
     "react/prop-types": "warn",
     "jsx-a11y/alt-text": "warn",
     "react/react-in-jsx-scope": "off",
