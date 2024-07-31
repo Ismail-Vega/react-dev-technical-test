@@ -84,10 +84,15 @@ const App = () => {
           sx={{
             marginLeft: "8px",
           }}
+          data-testid="list-title"
         >
           Lists
         </Typography>
-        <Button variant="contained" onClick={() => handleOpenModal(null)}>
+        <Button
+          variant="contained"
+          onClick={() => handleOpenModal(null)}
+          data-testid="create-list-button"
+        >
           Create List
         </Button>
       </Box>

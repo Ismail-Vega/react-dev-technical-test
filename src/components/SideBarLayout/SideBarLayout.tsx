@@ -62,13 +62,14 @@ const SideBarLayout = ({ children }: SideBarLayoutProps) => {
   );
 
   return (
-    <Box>
+    <Box data-testid="sidebar-layout">
       <AppBar
         position="fixed"
         sx={{
           ml: { sm: `${drawerWidth}px` },
           width: { sm: `calc(100% - ${drawerWidth}px)` },
         }}
+        data-testid="app-bar"
       >
         <Toolbar>
           <IconButton
@@ -77,10 +78,15 @@ const SideBarLayout = ({ children }: SideBarLayoutProps) => {
             aria-label="open drawer"
             onClick={handleDrawerToggle}
             sx={{ mr: 2, display: { sm: "none" } }}
+            data-testid="menu-button"
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" sx={{ margin: "auto" }}>
+          <Typography
+            variant="h6"
+            sx={{ margin: "auto" }}
+            data-testid="app-title"
+          >
             React Developer Technical Test
           </Typography>
         </Toolbar>
@@ -105,6 +111,7 @@ const SideBarLayout = ({ children }: SideBarLayoutProps) => {
               boxSizing: "border-box",
             },
           }}
+          data-testid="mobile-drawer"
         >
           {drawer}
         </Drawer>
@@ -118,6 +125,7 @@ const SideBarLayout = ({ children }: SideBarLayoutProps) => {
             },
           }}
           open
+          data-testid="desktop-drawer"
         >
           {drawer}
         </Drawer>
@@ -131,6 +139,7 @@ const SideBarLayout = ({ children }: SideBarLayoutProps) => {
           ml: { sm: `${drawerWidth}px` },
           width: { sm: `calc(100% - ${drawerWidth}px)` },
         }}
+        data-testid="main-content"
       >
         {children}
       </Box>

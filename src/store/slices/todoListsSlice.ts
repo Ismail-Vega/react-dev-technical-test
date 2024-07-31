@@ -25,22 +25,24 @@ const todoListsSlice = createSlice({
       state,
       action: PayloadAction<{ id: number; list: Partial<TodoList> }>
     ) => {
-      state.lists = {
-        ...state.lists,
-        [action.payload.id]: {
-          ...state.lists[action.payload.id],
-          ...action.payload.list,
-        },
-      };
+      const existingList = state.lists[action.payload.id];
+      if (existingList) {
+        state.lists = {
+          ...state.lists,
+          [action.payload.id]: {
+            ...existingList,
+            ...action.payload.list,
+          },
+        };
+      }
     },
     addTodoList: (
       state,
       action: PayloadAction<{ id: number; list: TodoList }>
     ) => {
-      state.lists = {
-        ...state.lists,
-        [action.payload.id]: action.payload.list,
-      };
+      state.lists[action.payload.id] = action.payload.list;
+      state.loading = false;
+      state.error = null;
     },
     deleteTodoList: (state, action: PayloadAction<{ listId: number }>) => {
       const { [action.payload.listId]: _, ...remainingLists } = state.lists;

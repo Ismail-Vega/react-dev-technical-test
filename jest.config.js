@@ -17,6 +17,8 @@ export default {
     "!src/**/*.d.ts",
     "!src/**/index.ts",
     "!src/**/*.test.tsx",
+    "!src/main.tsx",
+    "!src/router/AppRouter.tsx",
   ],
   coverageDirectory: "coverage",
   coverageReporters: ["json", "html", "text"],

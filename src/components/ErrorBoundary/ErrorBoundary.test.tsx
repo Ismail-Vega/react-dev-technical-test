@@ -24,8 +24,8 @@ describe("ErrorBoundary", () => {
       </ErrorBoundary>
     );
 
-    expect(
-      screen.getByText("Something went wrong. Please try again later.")
-    ).toBeInTheDocument();
+    expect(screen.getByTestId("errorBoundary")).toHaveTextContent(
+      "Something went wrong. Please try again later."
+    );
   });
 });

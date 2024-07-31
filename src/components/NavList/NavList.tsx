@@ -13,19 +13,19 @@ const NavList = memo(function NavList({
   handleDrawerToggle,
 }: NavListProps) {
   return (
-    <List>
+    <List data-testid="nav-list">
       {filteredLists.slice(0, MAX_NAV_ITEMS_SHOWN).map(({ id, name }) => (
         <ListNavItem
           key={id}
+          value={name}
           icon={<ListIcon />}
           navigate={navigate}
           path={`/list/${id}`}
-          value={name}
           onClick={handleDrawerToggle}
         />
       ))}
       {filteredLists.length > MAX_NAV_ITEMS_SHOWN && (
-        <Typography variant="body2" sx={{ ml: 2 }}>
+        <Typography variant="body2" sx={{ ml: 2 }} data-testid="more-items">
           {`+ ${filteredLists.length - MAX_NAV_ITEMS_SHOWN} more items`}
         </Typography>
       )}

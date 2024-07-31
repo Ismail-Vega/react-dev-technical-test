@@ -1,6 +1,8 @@
 import { memo } from "react";
-import { TextField, IconButton, InputAdornment } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
+import TextField from "@mui/material/TextField";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
 
 import { SearchBarProps } from "./SearchBarProps";
 
@@ -20,13 +22,14 @@ const SearchBar = memo(function SearchBar({
         endAdornment: (
           <InputAdornment position="end">
             {searchTerm && (
-              <IconButton onClick={onClearSearch}>
+              <IconButton onClick={onClearSearch} data-testid="clear-button">
                 <ClearIcon />
               </IconButton>
             )}
           </InputAdornment>
         ),
       }}
+      data-testid="search-bar"
     />
   );
 });

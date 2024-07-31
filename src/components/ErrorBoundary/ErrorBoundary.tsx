@@ -1,15 +1,14 @@
-import { Component, ReactNode } from "react";
-
-interface ErrorBoundaryProps {
-  children: ReactNode;
-}
+import React, { Component, ReactNode } from "react";
 
 interface ErrorBoundaryState {
   hasError: boolean;
 }
 
-class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: ErrorBoundaryProps) {
+class ErrorBoundary extends Component<
+  { children: ReactNode },
+  ErrorBoundaryState
+> {
+  constructor(props: { children: ReactNode }) {
     super(props);
     this.state = { hasError: false };
   }
@@ -18,9 +17,24 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     return { hasError: true };
   }
 
+  componentDidCatch(error: Error) {
+    // eslint-disable-next-line no-console
+    console.error(error);
+    this.setState({ hasError: true });
+  }
+
   render() {
     if (this.state.hasError) {
-      return <h1>Something went wrong. Please try again later.</h1>;
+      return (
+        <>
+          <div data-testid="errorBoundary">
+            Something went wrong. Please try again later.
+          </div>
+          <div data-testid="errorInfo">
+            Something went wrong. Please try again later.
+          </div>
+        </>
+      );
     }
 
     return this.props.children;

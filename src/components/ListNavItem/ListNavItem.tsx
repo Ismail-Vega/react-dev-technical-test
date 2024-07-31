@@ -18,10 +18,13 @@ const ListNavItem = ({
         navigate(path);
         if (onClick) onClick();
       }}
-      data-testid="list-nav-item-button"
+      data-testid={`list-nav-item-button-${value.replace(/\s/g, "")}`}
     >
       <ListItemIcon data-testid="list-nav-item-icon">{icon}</ListItemIcon>
-      <ListItemText primary={value} data-testid="list-nav-item-text" />
+      <ListItemText
+        primary={value}
+        data-testid={`list-nav-item-text-${value.replace(/\s/g, "")}`}
+      />
     </ListItemButton>
   </ListItem>
 );

@@ -30,6 +30,7 @@ const ConfirmationPopup = ({
         open={popperOpen}
         anchorEl={anchorEl}
         placement="bottom-end"
+        data-testid="todo-item-confirmation-popup"
         modifiers={[{ name: "offset", options: { offset: [0, 8] } }]}
       >
         <Box

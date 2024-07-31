@@ -18,7 +18,7 @@ describe("ListNavItem", () => {
       />
     );
 
-    expect(screen.getByTestId("list-nav-item-text")).toHaveTextContent(
+    expect(screen.getByTestId("list-nav-item-text-TestItem")).toHaveTextContent(
       "Test Item"
     );
     expect(screen.getByTestId("list-nav-item-icon")).toBeInTheDocument();
@@ -38,7 +38,7 @@ describe("ListNavItem", () => {
       />
     );
 
-    const listItemButton = screen.getByTestId("list-nav-item-button");
+    const listItemButton = screen.getByTestId("list-nav-item-button-TestItem");
 
     await userEvent.click(listItemButton);
 
@@ -59,7 +59,7 @@ describe("ListNavItem", () => {
       />
     );
 
-    const listItemButton = screen.getByTestId("list-nav-item-button");
+    const listItemButton = screen.getByTestId("list-nav-item-button-TestItem");
 
     await userEvent.click(listItemButton);
 

@@ -47,6 +47,7 @@ const AppForm = ({
         alignItems: "center",
         flexDirection: "column",
       }}
+      data-testid="app-form"
     >
       <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>{icon}</Avatar>
       <Box
@@ -72,6 +73,7 @@ const AppForm = ({
             helperText={
               error ? errorMsg : `${title.length}/${MAX_TITLE_LENGTH}`
             }
+            data-testid="app-form-input"
           />
         </FormControl>
 
@@ -80,6 +82,7 @@ const AppForm = ({
           type="submit"
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
+          data-testid="app-form-confirm-button"
         >
           Submit
         </Button>

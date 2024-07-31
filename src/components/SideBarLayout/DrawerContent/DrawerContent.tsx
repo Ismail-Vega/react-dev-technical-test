@@ -42,10 +42,11 @@ const DrawerContent = ({
         searchTerm={searchTerm}
         onSearchChange={onSearchChange}
         onClearSearch={onClearSearch}
+        data-testid="search-bar"
       />
     </Box>
     {loading && filteredLists.length === 0 ? (
-      <List sx={{ width: 200 }}>
+      <List sx={{ width: 200 }} data-testid="loading-skeleton">
         <Skeleton key="wave-1" animation="wave" />
         <Skeleton key="wave-2" animation="wave" />
         <Skeleton key="wave-3" animation="wave" />
@@ -57,6 +58,7 @@ const DrawerContent = ({
         filteredLists={filteredLists}
         navigate={navigate}
         handleDrawerToggle={handleDrawerToggle}
+        data-testid="nav-list"
       />
     )}
   </div>

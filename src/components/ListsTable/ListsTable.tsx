@@ -35,7 +35,9 @@ const ListItem = memo(function ListItem({
   actions: ReactNode;
 }) {
   return (
-    <TableRow>
+    <TableRow
+      data-testid={`list-row-${name.replace(/\s/g, "").toLocaleLowerCase()}`}
+    >
       <TableCell component="th" scope="row">
         {name}
       </TableCell>
@@ -85,7 +87,11 @@ const ListsTable = ({ rowMenuActions }: ListTableProps) => {
 
   return rows.length ? (
     <TableContainer component={Paper} sx={{ mb: 2 }}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+      <Table
+        sx={{ minWidth: 650 }}
+        aria-label="simple table"
+        data-testid="lists-table"
+      >
         <TableHead>
           <TableRow>
             <TableCell align="left">Name</TableCell>
