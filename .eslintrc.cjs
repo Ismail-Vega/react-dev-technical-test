@@ -1,6 +1,6 @@
 module.exports = {
   root: true,
-  env: { browser: true, es2021: true, node: true },
+  env: { browser: true, es2021: true, node: true, "cypress/globals": true },
   extends: [
     "eslint:recommended",
     "plugin:react/recommended",
@@ -10,7 +10,14 @@ module.exports = {
   ],
   ignorePatterns: ["dist", ".eslintrc.cjs", "jest.config.js"],
   parser: "@typescript-eslint/parser",
-  plugins: ["react-refresh", "react", "jsx-a11y", "complexity", "import"],
+  plugins: [
+    "react-refresh",
+    "react",
+    "jsx-a11y",
+    "complexity",
+    "import",
+    "cypress",
+  ],
   rules: {
     "react-refresh/only-export-components": [
       "warn",

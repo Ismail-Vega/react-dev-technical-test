@@ -16,10 +16,10 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "types": ["jest", "node", "@testing-library/jest-dom"],
+    "types": ["jest", "node", "@testing-library/jest-dom", "cypress"],
     "skipLibCheck": true,
-    "moduleResolution": "node",
+    "moduleResolution": "node"
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "cypress/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }
